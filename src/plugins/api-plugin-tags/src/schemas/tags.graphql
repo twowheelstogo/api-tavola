@@ -179,6 +179,6 @@ extend type Query {
     "By default, tags are sorted by position. Set this to sort by one of the other allowed fields"
     sortBy: TagSortByField = position
 
-    meta:String
+    metakey: String
   ): TagConnection
 }

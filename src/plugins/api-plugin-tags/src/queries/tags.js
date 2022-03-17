@@ -18,13 +18,7 @@ import _ from "lodash";
 export default async function tags(
   context,
   shopId,
-  {
-    filter,
-    shouldIncludeDeleted = false,
-    isTopLevel,
-    shouldIncludeInvisible = false,
-    excludedTagIds
-  } = {}
+  { filter, shouldIncludeDeleted = false, isTopLevel, shouldIncludeInvisible = false, excludedTagIds, metakey } = {}
 ) {
   const { collections } = context;
   const { Tags } = collections;
@@ -34,7 +28,7 @@ export default async function tags(
 
   // Check to see if user has `read` permissions for hidden / deleted tags
   const hasInactivePermissions = await context.userHasPermission("reaction:legacy:tags", "read:invisible", {
-    shopId
+    shopId,
   });
 
   if (isTopLevel === false || isTopLevel === true) query.isTopLevel = isTopLevel;
@@ -43,17 +37,17 @@ export default async function tags(
   if (filter) {
     regexMatch = { $regex: _.escapeRegExp(filter), $options: "i" };
     searchFieldFilter = {
-      $or: [
-        { name: regexMatch },
-        { slug: regexMatch }
-      ]
+      $or: [{ name: regexMatch }, { slug: regexMatch }],
     };
   }
 
   if (Array.isArray(excludedTagIds)) {
     query._id = {
-      $nin: excludedTagIds
+      $nin: excludedTagIds,
     };
+  }
+  if (metakey) {
+    query["metafields.value"] = { $in: metakey.split(",") };
   }
 
   // If user does not have `read-admin` permissions,
@@ -72,6 +66,6 @@ export default async function tags(
 
   return Tags.find({
     ...query,
-    ...searchFieldFilter
+    ...searchFieldFilter,
   });
 }
