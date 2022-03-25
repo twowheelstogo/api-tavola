@@ -48,7 +48,10 @@ const variantFieldsThatNeedPublishing = [
   "title",
   "type",
   "weight",
-  "width"
+  "width",
+  "minOption",
+  "maxOption",
+  "multipleOption"
 ];
 
 /**
@@ -82,6 +85,8 @@ export async function createProductHash(product, collections) {
     customPublishedProductVariantFields.forEach((field) => {
       variantForHashing[field] = variant[field];
     });
+    console.info(`\n\n==> { CatalogVariant }\n`, variantForHashing, `\n`, ``);
+  
     return variantForHashing;
   });
 

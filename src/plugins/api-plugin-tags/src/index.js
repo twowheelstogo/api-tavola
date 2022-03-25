@@ -14,6 +14,7 @@ import preStartup from "./preStartup.js";
  * @returns {undefined}
  */
 export default async function register(app) {
+  console.log('Hi'); console.log("")
   await app.registerPlugin({
     label: "Tags",
     name: "tags",
