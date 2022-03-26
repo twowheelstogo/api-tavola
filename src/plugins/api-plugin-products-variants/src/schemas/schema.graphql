@@ -1,0 +1,15 @@
+extend type ProductVariant {
+  multipleOption: Boolean
+  minOption: Int
+  maxOption: Int
+}
+extend input ProductVariantInput {
+  multipleOption: Boolean
+  minOption: Int
+  maxOption: Int
+}
+extend type CatalogProductVariant {
+  multipleOption: Boolean
+  minOption: Int
+  maxOption: Int
+}
