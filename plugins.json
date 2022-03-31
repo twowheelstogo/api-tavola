@@ -17,7 +17,7 @@
   "products": "@reactioncommerce/api-plugin-products",
   "catalogs": "@reactioncommerce/api-plugin-catalogs",
   "tags": "./src/plugins/api-plugin-tags/src/index.js",
-  "pricingSimple": "@reactioncommerce/api-plugin-pricing-simple",
+  "pricingSimple": "./src/plugins/api-plugin-pricing-simple/src/index.js",
   "inventory": "@reactioncommerce/api-plugin-inventory",
   "inventorySimple": "@reactioncommerce/api-plugin-inventory-simple",
   "carts": "@reactioncommerce/api-plugin-carts",

@@ -13,3 +13,23 @@ extend type CatalogProductVariant {
   minOption: Int
   maxOption: Int
 }
+
+extend type ProductPricingInfo {
+  maxFreeQty: Int
+}
+extend type CurrencyExchangeProductPricingInfo {
+  maxFreeQty: Int
+}
+extend input ProductVariantPricesInput {
+  maxFreeQty: Int
+}
+extend type ProductVariant {
+  "maxFreeQty of the variant"
+  maxFreeQty: Float @deprecated(reason: "Use `pricing`")
+}
+
+extend input ProductVariantInput {
+  "Variant maxFreeQty. DEPRECATED. Use the `updateProductVariantPrices` mutation to set product variant prices."
+  # @deprecated isn't allowed on input fields yet. See See https://github.com/graphql/graphql-spec/pull/525
+  maxFreeQty: Float
+}

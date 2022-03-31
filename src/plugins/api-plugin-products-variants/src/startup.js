@@ -14,6 +14,11 @@ export default async function productsVariantsStartup(context) {
       min: 0,
       optional: true,
     },
+    maxFreeQty: {
+      type: Number,
+      min: 0,
+      optional: true,
+    },
   };
   context.simpleSchemas.ProductVariant.extend(schema);
 
