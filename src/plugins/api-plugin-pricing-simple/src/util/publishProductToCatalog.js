@@ -13,7 +13,10 @@ function getPricingObject(doc, priceInfo) {
     displayPrice: priceInfo.range,
     maxPrice: priceInfo.max,
     minPrice: priceInfo.min,
-    price: typeof doc.price === "number" ? doc.price : null
+    price: typeof doc.price === "number" ? doc.price : null,
+    maxFreeQty: typeof doc.maxFreeQty === "number" ? doc.maxFreeQty : null,
+    maxQty: typeof doc.maxQty === "number" ? doc.maxQty : null,
+    minQty: typeof doc.minQty === "number" ? doc.minQty : null,
   };
 }
 

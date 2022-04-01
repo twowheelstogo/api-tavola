@@ -8,14 +8,17 @@ export default async (node, context) => {
   const currencyDefinition = getCurrencyDefinitionByCode(shop.currency);
 
   let pricing = {};
-  const { price } = node;
+  const { price, maxFreeQty, maxQty,minQty } = node;
   if (typeof price === "object") {
     pricing = {
       compareAtPrice: null,
       displayPrice: getDisplayPrice(price.min, price.max, currencyDefinition),
       maxPrice: price.max,
       minPrice: price.min,
-      price: null
+      price: null,
+      maxFreeQty: null,
+      maxQty:null,
+      minQty:null,
     };
   } else {
     pricing = {
@@ -23,7 +26,10 @@ export default async (node, context) => {
       displayPrice: accounting.formatMoney(price, currencyDefinition.symbol),
       maxPrice: price || 0,
       minPrice: price || 0,
-      price: price || 0
+      price: price || 0,
+      maxFreeQty: maxFreeQty || 0,
+      maxQty: maxQty,
+      minQty: minQty
     };
   }
 

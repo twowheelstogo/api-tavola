@@ -12,4 +12,4 @@ export default async function publishProductToCatalog(
         variant[field] = baseVariant[field];
   console.info("final", variant);
     }
-  }
+}
