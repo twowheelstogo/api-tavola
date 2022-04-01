@@ -8,7 +8,7 @@ export default async (node, context) => {
   const currencyDefinition = getCurrencyDefinitionByCode(shop.currency);
 
   let pricing = {};
-  const { price, maxFreeQty } = node;
+  const { price, maxFreeQty, maxQty,minQty } = node;
   if (typeof price === "object") {
     pricing = {
       compareAtPrice: null,
@@ -17,6 +17,8 @@ export default async (node, context) => {
       minPrice: price.min,
       price: null,
       maxFreeQty: null,
+      maxQty:null,
+      minQty:null,
     };
   } else {
     pricing = {
@@ -26,6 +28,8 @@ export default async (node, context) => {
       minPrice: price || 0,
       price: price || 0,
       maxFreeQty: maxFreeQty || 0,
+      maxQty: maxQty,
+      minQty: minQty
     };
   }
 

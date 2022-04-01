@@ -14,6 +14,14 @@ const pricesInput = new SimpleSchema({
     type: Number,
     optional: true
   },
+  maxQty: {
+    type: Number,
+    optional: true
+  },
+  minQty: {
+    type: Number,
+    optional: true
+  },
 });
 
 const inputSchema = new SimpleSchema({

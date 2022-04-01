@@ -15,6 +15,8 @@ function getPricingObject(doc, priceInfo) {
     minPrice: priceInfo.min,
     price: typeof doc.price === "number" ? doc.price : null,
     maxFreeQty: typeof doc.maxFreeQty === "number" ? doc.maxFreeQty : null,
+    maxQty: typeof doc.maxQty === "number" ? doc.maxQty : null,
+    minQty: typeof doc.minQty === "number" ? doc.minQty : null,
   };
 }
 
