@@ -5,8 +5,6 @@ import packageJson from "../package.json";
 const api = new ReactionAPICore({
   serveStaticPaths: ["public"],
   version: packageJson.version
-
-  
 });
 
 /**

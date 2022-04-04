@@ -8,17 +8,17 @@ export default async (node, context) => {
   const currencyDefinition = getCurrencyDefinitionByCode(shop.currency);
 
   let pricing = {};
-  const { price, maxFreeQty, maxQty,minQty } = node;
-  if (typeof price === "object") {
+  const { price, maxFreeQty, maxQty, minQty } = node;
+  if (price && typeof price === "object") {
     pricing = {
       compareAtPrice: null,
-      displayPrice: getDisplayPrice(price.min, price.max, currencyDefinition),
+      displayPrice: getDisplayPrice(price.min || 0, price.max || 0, currencyDefinition),
       maxPrice: price.max,
       minPrice: price.min,
       price: null,
-      maxFreeQty: null,
-      maxQty:null,
-      minQty:null,
+      maxFreeQty: maxFreeQty || null,
+      maxQty: maxQty || null,
+      minQty: minQty || null,
     };
   } else {
     pricing = {
@@ -27,9 +27,9 @@ export default async (node, context) => {
       maxPrice: price || 0,
       minPrice: price || 0,
       price: price || 0,
-      maxFreeQty: maxFreeQty || 0,
-      maxQty: maxQty,
-      minQty: minQty
+      maxFreeQty: maxFreeQty || null,
+      maxQty: maxQty || null,
+      minQty: minQty || null,
     };
   }
 
