@@ -2,7 +2,7 @@ import hashToken from "@reactioncommerce/api-utils/hashToken.js";
 import Random from "@reactioncommerce/random";
 import ReactionError from "@reactioncommerce/reaction-error";
 import Logger from "@reactioncommerce/logger";
-import addCartItems from "../util/addCartItems.js";
+import addCartCatalogs from "../util/addCartCatalogs.js";
 
 /**
  * @method createCart
@@ -41,13 +41,13 @@ export default async function createCart(context, input) {
   const {
     incorrectPriceFailures,
     minOrderQuantityFailures,
-    updatedItemList
-  } = await addCartItems(context, [], items);
+    updated
+  } = await addCartCatalogs(context, {}, input);
 
   // If all input items were invalid, don't create a cart
-  if (!updatedItemList.length && shouldCreateWithoutItems !== true) {
-    return { cart: null, incorrectPriceFailures, minOrderQuantityFailures, token: null };
-  }
+  // if (!updated.items.length && shouldCreateWithoutItems !== true) {
+  //   return { cart: null, incorrectPriceFailures, minOrderQuantityFailures, token: null };
+  // }
 
   let anonymousAccessToken = null;
   if (!accountId) {
@@ -60,12 +60,12 @@ export default async function createCart(context, input) {
 
   const createdAt = new Date();
   const newCart = {
+    ...updated,
     _id: Random.id(),
     accountId,
     anonymousAccessToken: anonymousAccessToken && hashToken(anonymousAccessToken),
     currencyCode: cartCurrencyCode,
     createdAt,
-    items: updatedItemList,
     shopId,
     updatedAt: createdAt,
     workflow: {

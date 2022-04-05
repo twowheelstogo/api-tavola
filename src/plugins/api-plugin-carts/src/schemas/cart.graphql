@@ -291,6 +291,9 @@ input CreateCartInput {
   "An optional string identifying the mutation call, which will be returned in the response payload"
   clientMutationId: String
 
+  "Array of catalogs to be added to the cart"
+  catalogs: [CartCatalogInput]
+
   "Array of items to add to new cart."
   items: [CartItemInput]!
 
@@ -298,8 +301,32 @@ input CreateCartInput {
   shopId: ID!
 }
 
+"Information about an catalog to add to a cart"
+input CartCatalogInput {
+  "cartCatalogId"
+  cartCatalogId: ID
+
+  "Arbitrary additional metadata about this cart catalog."
+  metafields: [MetafieldInput]
+
+  """
+  The price of this catalog, for validating that this matches the actual price in the system,
+  in case the client has stale data.
+  """
+  price: MoneyInput
+
+  "The Product ID"
+  productId: ID
+
+  "The number of this catalog to add to the cart"
+  quantity: Int
+}
+
 "Information about an item to add to a cart"
 input CartItemInput {
+  "cart catalog Id (ex: Menu Id)"
+  cartCatalogId: ID
+
   "Arbitrary additional metadata about this cart item."
   metafields: [MetafieldInput]
 
@@ -336,6 +363,9 @@ input AddCartItemsInput {
   "An optional string identifying the mutation call, which will be returned in the response payload"
   clientMutationId: String
 
+  "Array of catalogs to be added to the cart"
+  catalogs: [CartCatalogInput]
+
   "Array of items to be added to the cart"
   items: [CartItemInput]!
 }
@@ -362,6 +392,8 @@ input UpdateCartItemInput {
 
   "New absolute value for specified cart item's quantity. Not an incremental value."
   quantity: Int!
+
+  cartCatalogId: ID
 }
 
 "Input for the `updateCartItemsQuantity` mutation"

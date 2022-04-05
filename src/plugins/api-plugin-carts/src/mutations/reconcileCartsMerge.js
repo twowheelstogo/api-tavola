@@ -1,5 +1,5 @@
 import ReactionError from "@reactioncommerce/reaction-error";
-import addCartItems from "../util/addCartItems.js";
+import addCartCatalogs from "../util/addCartCatalogs.js";
 
 /**
  * @summary Update account cart to have only the anonymous cart items, delete anonymous
@@ -10,12 +10,7 @@ import addCartItems from "../util/addCartItems.js";
  * @param {Object} context App context
  * @returns {Object} The updated account cart
  */
-export default async function reconcileCartsMerge({
-  accountCart,
-  anonymousCart,
-  anonymousCartSelector,
-  context
-}) {
+export default async function reconcileCartsMerge({ accountCart, anonymousCart, anonymousCartSelector, context }) {
   const { collections } = context;
   const { Cart } = collections;
 
@@ -25,20 +20,25 @@ export default async function reconcileCartsMerge({
     price: item.price,
     productConfiguration: {
       productId: item.productId,
-      productVariantId: item.variantId
+      productVariantId: item.variantId,
     },
-    quantity: item.quantity
+    quantity: item.quantity,
   }));
 
   // Merge the item lists
-  const { updatedItemList: items } = await addCartItems(context, accountCart.items, itemsInput, {
-    skipPriceCheck: true
-  });
+  const { updated } = await addCartCatalogs(
+    context,
+    accountCart,
+    { ...anonymousCart, itmes: itemsInput },
+    {
+      skipPriceCheck: true,
+    }
+  );
 
   const updatedCart = {
     ...accountCart,
-    items,
-    updatedAt: new Date()
+    ...updated,
+    updatedAt: new Date(),
   };
 
   const savedCart = await context.mutations.saveCart(context, updatedCart);

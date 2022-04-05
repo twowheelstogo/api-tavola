@@ -1,6 +1,6 @@
 import hashToken from "@reactioncommerce/api-utils/hashToken.js";
 import ReactionError from "@reactioncommerce/reaction-error";
-import addCartItemsUtil from "../util/addCartItems.js";
+import addCartCatalogsUtil from "../util/addCartCatalogs.js";
 
 /**
  * @method addCartItems
@@ -16,7 +16,7 @@ import addCartItemsUtil from "../util/addCartItems.js";
  *   optionally retry with the corrected price or quantity.
  */
 export default async function addCartItems(context, input, options = {}) {
-  const { cartId, items, cartToken } = input;
+  const { cartId, items, catalogs, cartToken } = input;
   const { collections, accountId = null } = context;
   const { Cart } = collections;
 
@@ -38,16 +38,17 @@ export default async function addCartItems(context, input, options = {}) {
     throw new ReactionError("not-found", "Cart not found");
   }
 
-  const {
-    incorrectPriceFailures,
-    minOrderQuantityFailures,
-    updatedItemList
-  } = await addCartItemsUtil(context, cart.items, items, { skipPriceCheck: options.skipPriceCheck });
+  const { incorrectPriceFailures, minOrderQuantityFailures, updated } = await addCartCatalogsUtil(
+    context,
+    cart,
+    input,
+    { skipPriceCheck: options.skipPriceCheck }
+  );
 
   const updatedCart = {
     ...cart,
-    items: updatedItemList,
-    updatedAt: new Date()
+    ...updated,
+    updatedAt: new Date(),
   };
 
   const savedCart = await context.mutations.saveCart(context, updatedCart);

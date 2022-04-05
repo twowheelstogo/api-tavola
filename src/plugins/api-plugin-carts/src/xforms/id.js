@@ -8,7 +8,7 @@ const namespaces = {
   CartItem: "reaction/cartItem",
   FulfillmentGroup: "reaction/fulfillmentGroup",
   Product: "reaction/product",
-  Shop: "reaction/shop"
+  Shop: "reaction/shop",
 };
 
 export const encodeAccountOpaqueId = encodeOpaqueId(namespaces.Account);
@@ -35,7 +35,13 @@ export function decodeCartItemsOpaqueIds(items) {
     ...item,
     productConfiguration: {
       productId: decodeProductOpaqueId(item.productConfiguration.productId),
-      productVariantId: decodeProductOpaqueId(item.productConfiguration.productVariantId)
-    }
+      productVariantId: decodeProductOpaqueId(item.productConfiguration.productVariantId),
+    },
+  }));
+}
+export function decodeCartCatalogsOpaqueIds(catalogs) {
+  return catalogs.map((catalog) => ({
+    ...catalog,
+    productId: decodeProductOpaqueId(catalog.productId),
   }));
 }
