@@ -24,6 +24,7 @@ export default async function createCart(context, input) {
   const { items, shopId, shouldCreateWithoutItems = false } = input;
   const { collections, accountId = null, getFunctionsOfType } = context;
   const { Cart, Shops } = collections;
+  console.info("Create Cart", JSON.stringify(input,null,2));
 
   if (shouldCreateWithoutItems !== true && (!Array.isArray(items) || !items.length)) {
     throw new ReactionError("invalid-param", "A cart may not be created without at least one item in it");

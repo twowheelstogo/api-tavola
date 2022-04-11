@@ -621,6 +621,11 @@ const Money = new SimpleSchema({
   amount: {
     type: Number,
     min: 0
+  },
+  base: {
+    type: Number,
+    min: 0,
+    optional:true
   }
 });
 
@@ -667,6 +672,10 @@ const CartItemAttribute = new SimpleSchema({
 export const CartItem = new SimpleSchema({
   "_id": String,
   "addedAt": Date,
+  "cartCatalogId": {
+    type: String,
+    optional: true
+  },
   "attributes": {
     type: Array,
     optional: true
@@ -803,6 +812,14 @@ export const Cart = new SimpleSchema({
   },
   "items.$": {
     type: CartItem
+  },
+  "catalogs": {
+    type: Array,
+    optional: true
+  },
+  "catalogs.$": {
+    type: Object,
+    blackbox: true
   },
   "missingItems": {
     type: Array,

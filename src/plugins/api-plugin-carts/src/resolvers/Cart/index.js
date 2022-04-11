@@ -4,6 +4,7 @@ import { encodeCartOpaqueId } from "../../xforms/id.js";
 import xformCartItems from "../../xforms/xformCartItems.js";
 import checkout from "./checkout.js";
 import items from "./items.js";
+import catalogs from "./catalogs.js";
 import totalItemQuantity from "./totalItemQuantity.js";
 
 export default {
@@ -11,6 +12,7 @@ export default {
   account: resolveAccountFromAccountId,
   checkout,
   items,
+  catalogs,
   missingItems: (cart, _, context) => xformCartItems(context, cart.missingItems || []),
   shop: resolveShopFromShopId,
   totalItemQuantity
