@@ -217,7 +217,7 @@ export default async function addCartCatalogs(context, cart, input, options = {}
         const subtotal = item.pricing.price * finalQty;
         const total = subtotal * catalog.catalog.quantity;
         item.item.subtotal.amount = +accounting.toFixed(total, 3);
-        item.item.subtotal.base = +accounting.toFixed(subtotal, 3);
+        item.item.subtotal.base = subtotal;
         priceTotal += total;
         //
         maxFreeQty -= item.item.quantity - item.pricing.maxFreeQty;

@@ -5,6 +5,7 @@ const namespaces = {
   Account: "reaction/account",
   Address: "reaction/address",
   Cart: "reaction/cart",
+  CartCatalog: "reaction/cartCatalog",
   CartItem: "reaction/cartItem",
   FulfillmentGroup: "reaction/fulfillmentGroup",
   Product: "reaction/product",
@@ -13,6 +14,7 @@ const namespaces = {
 
 export const encodeAccountOpaqueId = encodeOpaqueId(namespaces.Account);
 export const encodeAddressOpaqueId = encodeOpaqueId(namespaces.Address);
+export const encodeCartCatalogOpaqueId = encodeOpaqueId(namespaces.CartCatalog);
 export const encodeCartItemOpaqueId = encodeOpaqueId(namespaces.CartItem);
 export const encodeCartOpaqueId = encodeOpaqueId(namespaces.Cart);
 export const encodeFulfillmentGroupOpaqueId = encodeOpaqueId(namespaces.FulfillmentGroup);
@@ -21,6 +23,7 @@ export const encodeProdcutOpaqueId = encodeOpaqueId(namespaces.Prodcut);
 
 export const decodeAccountOpaqueId = decodeOpaqueIdForNamespace(namespaces.Account);
 export const decodeAddressOpaqueId = decodeOpaqueIdForNamespace(namespaces.Address);
+export const decodeCartCatalogOpaqueId = decodeOpaqueIdForNamespace(namespaces.CartCatalog);
 export const decodeCartItemOpaqueId = decodeOpaqueIdForNamespace(namespaces.CartItem);
 export const decodeCartOpaqueId = decodeOpaqueIdForNamespace(namespaces.Cart);
 export const decodeFulfillmentGroupOpaqueId = decodeOpaqueIdForNamespace(namespaces.FulfillmentGroup);

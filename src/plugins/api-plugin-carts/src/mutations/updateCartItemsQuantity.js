@@ -16,6 +16,10 @@ const inputSchema = new SimpleSchema({
   "cartToken": {
     type: String,
     optional: true
+  },
+  "cartCatalogId": {
+    type: String,
+    optional: true
   }
 });
 

@@ -97,6 +97,9 @@ type Cart implements Node {
   "The shop that owns the cart."
   shop: Shop!
 
+  "Total quantity of all catalogs in the cart"
+  totalCatalogQuantity: Int!
+
   "Total quantity of all items in the cart"
   totalItemQuantity: Int!
 
@@ -200,6 +203,8 @@ type CartCatalog implements Node {
   the original item is destroyed and this field will reflect the time it was created for the most recent addition.
   """
   createdAt: DateTime
+  updatedAt: DateTime
+  addedAt: DateTime
 
   "The current price of the item"
   price: Money
@@ -476,6 +481,15 @@ input UpdateCartItemInput {
   cartCatalogId: ID
 }
 
+"Input for the `updateCartCatalog` mutation"
+input UpdateCartCatalogInput {
+  "The cart item ID"
+  cartCatalogId: ID!
+
+  "New absolute value for specified cart item's quantity. Not an incremental value."
+  quantity: Int!
+}
+
 "Input for the `updateCartItemsQuantity` mutation"
 input UpdateCartItemsQuantityInput {
   "The cart ID"
@@ -489,6 +503,20 @@ input UpdateCartItemsQuantityInput {
 
   "Array of cart item quantities to update."
   items: [UpdateCartItemInput]!
+}
+"Input for the `updateCartCatalogsQuantity` mutation"
+input UpdateCartCatalogsQuantityInput {
+  "The cart ID"
+  cartId: ID!
+
+  "If this cart is anonymous, provide the `cartToken` that was returned in the `CreateCartPayload`"
+  cartToken: String
+
+  "An optional string identifying the mutation call, which will be returned in the response payload"
+  clientMutationId: String
+
+  "Array of cart item quantities to update."
+  catalogs: [UpdateCartCatalogInput]!
 }
 
 "Input for the `reconcileCarts` mutation call"
@@ -699,5 +727,10 @@ extend type Mutation {
   updateCartItemsQuantity(
     "Mutation input"
     input: UpdateCartItemsQuantityInput!
+  ): UpdateCartItemsQuantityPayload!
+  "Update cart catalog(s) quantity. Use absolute quantity. If updating to 0, the catalog will be removed."
+  updateCartCatalogsQuantity(
+    "Mutation input"
+    input: UpdateCartCatalogsQuantityInput!
   ): UpdateCartItemsQuantityPayload!
 }
