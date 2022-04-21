@@ -1,4 +1,4 @@
-import lodash from "lodash"
+import lodash from "lodash";
 import accounting from "accounting-js";
 /**
  * @name cartCatalogsRefresh
@@ -9,6 +9,10 @@ import accounting from "accounting-js";
  * @returns {Promise<Object>} - ...
  */
 export default function cartCatalogsRefresh(opts) {
+  //
+  for (const o of ["maxOrderQuantityFailures", "minOrderQuantityFailures", "items", "catalogs", "incorrectPriceFailures"])
+    if (!opts[o]) opts[o] = [];
+  //
   opts.catalogs.reduce((list, catalog) => {
     // Init
     catalog = lodash.merge(
@@ -54,9 +58,22 @@ export default function cartCatalogsRefresh(opts) {
         ///|\\\|///|\\\|///|\\\
         ///      Validation
         ///|\\\|///|\\\|///|\\\
+        // if (opts.skipPriceCheck !== true && variantPriceInfo.price !== price.amount) {
+        //   opts.incorrectPriceFailures.push({
+        //     currentPrice: {
+        //       amount: variantPriceInfo.price,
+        //       currencyCode: item.price.currencyCode,
+        //     },
+        //     productConfiguration: {
+        //       productId: catalog.productId,
+        //       productVariantId: variant._id,
+        //     },
+        //     providedPrice: price,
+        //   });
+        //   return;
+        // }
         if (variant.price.minQty && variant.price.minQty > qtyTotal) {
-          console.info("Error: minOrderQuantityFailures", {
-            // minOrderQuantityFailures.push({
+          opts.minOrderQuantityFailures.push({
             minOrderQuantity: variant.price.minQty,
             productConfiguration: {
               productId: catalog.productId,
@@ -66,8 +83,7 @@ export default function cartCatalogsRefresh(opts) {
           });
         }
         if (variant.price.maxQty && variant.price.maxQty < qtyTotal) {
-          console.info("Error: maxOrderQuantityFailures", {
-            // maxOrderQuantityFailures.push({
+          opts.maxOrderQuantityFailures.push({
             maxOrderQuantity: variant.price.maxQty,
             productConfiguration: {
               productId: catalog.productId,
@@ -92,39 +108,19 @@ export default function cartCatalogsRefresh(opts) {
       list.push(catalog);
     }
   }, []);
-
-  //   ///|\\\|///|\\\|///|\\\
-  // ///      Init
+  ///|\\\|///|\\\|///|\\\
+  ///      Catalogs:Sort
+  ///|\\\|///|\\\|///|\\\
+  opts.catalogs = opts.catalogs.sort((a, b) => a.addedAt.getTime() - b.addedAt.getTime());
+  const cartCatalogIds = opts.catalogs.map((c) => c._id);
   // ///|\\\|///|\\\|///|\\\
-  // let cartCatalogIds = Object.keys(catalogs);
-
+  // ///      Items: Clean & Sort
   // ///|\\\|///|\\\|///|\\\
-  // ///      Catalogs:Clean
-  // ///|\\\|///|\\\|///|\\\
-  // updated.catalogs = (cart.catalogs || [])
-  //   .filter((c) => !cartCatalogIds.includes(c._id))
-  //   .concat(Object.values(catalogs).map((c) => c.catalog))
-  //   .filter((c) => c.quantity)
-  //   .sort((a, b) => a.addedAt.getTime() - b.addedAt.getTime());
-  // const hasQtycartCatalogIds = updated.catalogs.map((c) => c._id);
-  // ///|\\\|///|\\\|///|\\\
-  // ///      Items: Clean
-  // ///|\\\|///|\\\|///|\\\
-  // updated.items = (cart.items || [])
-  //   .filter((i) => !hasQtycartCatalogIds.includes(i.cartCatalogId) || !cartCatalogIds.includes(i._id))
-  //   .concat(
-  //     Object.values(catalogs)
-  //       .map((c) =>
-  //         Object.values(c.variants)
-  //           .map((v) => Object.values(v.items).map((i) => i.item))
-  //           .flat()
-  //       )
-  //       .flat()
-  //   )
-  //   .filter((i) => i.quantity)
-  //   .sort((a, b) => a.addedAt.getTime() - b.addedAt.getTime());
+  opts.items = opts.items
+    .filter((i) => !i.quantity || !cartCatalogIds.includes(i._id))
+    .sort((a, b) => a.addedAt.getTime() - b.addedAt.getTime());
   ///|\\\|///|\\\|///|\\\
   ///      Return
   ///|\\\|///|\\\|///|\\\
-  return {...opts, updated: lodash.pick(opts, ["catalogs", "items"])};
+  return { ...opts, updated: lodash.pick(opts, ["catalogs", "items"]) };
 }

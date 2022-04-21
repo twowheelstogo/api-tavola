@@ -2,8 +2,44 @@ import Random from "@reactioncommerce/random";
 import SimpleSchema from "simpl-schema";
 import accounting from "accounting-js";
 import ReactionError from "@reactioncommerce/reaction-error";
+
+const inputItemSchema = new SimpleSchema({
+  metafields: {
+    type: Array,
+    optional: true,
+  },
+  "metafields.$": {
+    type: Object,
+    blackbox: true,
+  },
+  productConfiguration: Object,
+  "productConfiguration.productId": String,
+  "productConfiguration.productVariantId": String,
+  quantity: SimpleSchema.Integer,
+  price: Object,
+  "price.currencyCode": String,
+  "price.amount": {
+    type: Number,
+    optional: true,
+  },
+});
+
+/**
+ * @summary Given a list of current cart items and a list of items a shopper wants
+ *   to add, validate available quantities and return the full merged list.
+ * @param {Object} context - App context
+ * @param {Object[]} cart.items - Array of current items in CartItem schema
+ * @param {Object[]} input.items - Array of items to add in CartItemInput schema
+ * @param {Object} [options] - Options
+ * @param {Boolean} [options.skipPriceCheck] - For backwards compatibility, set to `true` to skip checking price.
+ *   Skipping this is not recommended for new code.
+ * @returns {Object} Object with `incorrectPriceFailures` and `minOrderQuantityFailures` and `updatedItemList` props
+ */
 export default async function addCartCatalogs(context, cart, input, options = {}) {
   const { queries } = context;
+
+  // inputItemSchema.validate(input.items);
+
   const incorrectPriceFailures = [];
   const minOrderQuantityFailures = [];
   const maxOrderQuantityFailures = [];
