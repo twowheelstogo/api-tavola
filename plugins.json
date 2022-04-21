@@ -21,7 +21,7 @@
   "inventory": "@reactioncommerce/api-plugin-inventory",
   "inventorySimple": "@reactioncommerce/api-plugin-inventory-simple",
   "carts": "./src/plugins/api-plugin-carts/index.js",
-  "orders": "@reactioncommerce/api-plugin-orders",
+  "orders": "./src/plugins/api-plugin-orders/src/index.js",
   "payments": "@reactioncommerce/api-plugin-payments",
   "paymentsStripeSCA": "@reactioncommerce/api-plugin-payments-stripe-sca",
   "paymentsExample": "@reactioncommerce/api-plugin-payments-example",

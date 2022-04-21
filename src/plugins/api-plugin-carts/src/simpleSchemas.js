@@ -1,12 +1,73 @@
 import SimpleSchema from "simpl-schema";
 
-const withoutCodeCountries = ["AO", "AG", "AW", "BS", "BZ", "BJ", "BW",
-  "BF", "BI", "CM", "CF", "KM", "CG", "CD", "CK", "CI", "DJ",
-  "DM", "GQ", "ER", "FJ", "TF", "GM", "GH", "GD", "GN", "GY",
-  "HK", "IE", "JM", "KE", "KI", "MO", "MW", "ML", "MR", "MU",
-  "MS", "NR", "AN", "NU", "KP", "PA", "QA", "RW", "KN", "LC",
-  "ST", "SA", "SC", "SL", "SB", "SO", "SR", "SY", "TZ", "TL",
-  "TK", "TO", "TT", "TV", "UG", "AE", "VU", "YE", "ZW"];
+const withoutCodeCountries = [
+  "AO",
+  "AG",
+  "AW",
+  "BS",
+  "BZ",
+  "BJ",
+  "BW",
+  "BF",
+  "BI",
+  "CM",
+  "CF",
+  "KM",
+  "CG",
+  "CD",
+  "CK",
+  "CI",
+  "DJ",
+  "DM",
+  "GQ",
+  "ER",
+  "FJ",
+  "TF",
+  "GM",
+  "GH",
+  "GD",
+  "GN",
+  "GY",
+  "HK",
+  "IE",
+  "JM",
+  "KE",
+  "KI",
+  "MO",
+  "MW",
+  "ML",
+  "MR",
+  "MU",
+  "MS",
+  "NR",
+  "AN",
+  "NU",
+  "KP",
+  "PA",
+  "QA",
+  "RW",
+  "KN",
+  "LC",
+  "ST",
+  "SA",
+  "SC",
+  "SL",
+  "SB",
+  "SO",
+  "SR",
+  "SY",
+  "TZ",
+  "TL",
+  "TK",
+  "TO",
+  "TT",
+  "TV",
+  "UG",
+  "AE",
+  "VU",
+  "YE",
+  "ZW",
+];
 
 /**
  * @name Metafield
@@ -23,29 +84,29 @@ const Metafield = new SimpleSchema({
   key: {
     type: String,
     max: 30,
-    optional: true
+    optional: true,
   },
   namespace: {
     type: String,
     max: 20,
-    optional: true
+    optional: true,
   },
   scope: {
     type: String,
-    optional: true
+    optional: true,
   },
   value: {
     type: String,
-    optional: true
+    optional: true,
   },
   valueType: {
     type: String,
-    optional: true
+    optional: true,
   },
   description: {
     type: String,
-    optional: true
-  }
+    optional: true,
+  },
 });
 
 /**
@@ -71,51 +132,51 @@ const Metafield = new SimpleSchema({
  * @property {Metafield[]} metafields
  */
 export const CartAddress = new SimpleSchema({
-  "_id": {
+  _id: {
     type: String,
-    optional: true
+    optional: true,
   },
-  "fullName": {
+  fullName: {
     type: String,
-    label: "Full name"
+    label: "Full name",
   },
-  "firstName": {
+  firstName: {
     type: String,
     label: "First name",
-    optional: true
+    optional: true,
   },
-  "lastName": {
+  lastName: {
     type: String,
     label: "Last name",
-    optional: true
+    optional: true,
   },
-  "address1": {
+  address1: {
     label: "Address 1",
-    type: String
+    type: String,
   },
-  "address2": {
+  address2: {
     label: "Address 2",
     type: String,
-    optional: true
+    optional: true,
   },
-  "city": {
+  city: {
     type: String,
-    label: "City"
+    label: "City",
   },
-  "company": {
+  company: {
     type: String,
     label: "Company",
-    optional: true
+    optional: true,
   },
-  "phone": {
+  phone: {
     type: String,
-    label: "Phone"
+    label: "Phone",
   },
-  "region": {
+  region: {
     label: "State/Province/Region",
-    type: String
+    type: String,
   },
-  "postal": {
+  postal: {
     label: "ZIP/Postal Code",
     type: String,
     optional: true,
@@ -127,42 +188,42 @@ export const CartAddress = new SimpleSchema({
         }
       }
       return true;
-    }
+    },
   },
-  "country": {
+  country: {
     type: String,
-    label: "Country"
+    label: "Country",
   },
-  "isCommercial": {
+  isCommercial: {
     label: "This is a commercial address.",
     type: Boolean,
-    defaultValue: false
+    defaultValue: false,
   },
-  "isBillingDefault": {
+  isBillingDefault: {
     label: "Make this your default billing address?",
     type: Boolean,
     defaultValue: false,
-    optional: true
+    optional: true,
   },
-  "isShippingDefault": {
+  isShippingDefault: {
     label: "Make this your default shipping address?",
     type: Boolean,
     defaultValue: false,
-    optional: true
+    optional: true,
   },
-  "failedValidation": {
+  failedValidation: {
     label: "Failed validation",
     type: Boolean,
     defaultValue: false,
-    optional: true
+    optional: true,
   },
-  "metafields": {
+  metafields: {
     type: Array,
-    optional: true
+    optional: true,
   },
   "metafields.$": {
-    type: Metafield
-  }
+    type: Metafield,
+  },
 });
 
 /**
@@ -178,12 +239,12 @@ export const CartAddress = new SimpleSchema({
 const ShippoShippingMethod = new SimpleSchema({
   serviceLevelToken: {
     type: String,
-    optional: true
+    optional: true,
   },
   rateId: {
     type: String,
-    optional: true
-  }
+    optional: true,
+  },
 });
 
 /**
@@ -212,107 +273,108 @@ const ShippoShippingMethod = new SimpleSchema({
  * @property {ShippoShippingMethod} settings optional
  */
 const ShippingMethod = new SimpleSchema({
-  "_id": {
+  _id: {
     type: String,
-    label: "Shipment Method Id"
+    label: "Shipment Method Id",
   },
-  "name": {
+  name: {
     type: String,
     label: "Method Name",
-    optional: true
+    optional: true,
   },
-  "label": {
+  label: {
     type: String,
-    label: "Public Label"
+    label: "Public Label",
   },
-  "group": {
+  group: {
     type: String,
     label: "Group",
     allowedValues: ["Ground", "Priority", "One Day", "Free"],
-    optional: true
+    optional: true,
   },
-  "cost": {
+  cost: {
     type: Number,
     label: "Cost",
-    optional: true
+    optional: true,
   },
-  "handling": {
+  handling: {
     type: Number,
     label: "Handling",
     optional: true,
     defaultValue: 0,
-    min: 0
+    min: 0,
   },
-  "rate": {
+  rate: {
     type: Number,
     label: "Rate",
-    min: 0
+    min: 0,
   },
-  "enabled": {
+  enabled: {
     type: Boolean,
     label: "Enabled",
-    defaultValue: false
+    defaultValue: false,
   },
-  "validRanges": {
+  validRanges: {
     type: Array,
     optional: true,
-    label: "Matching Cart Ranges"
+    label: "Matching Cart Ranges",
   },
   "validRanges.$": {
     type: Object,
-    optional: true
+    optional: true,
   },
   "validRanges.$.begin": {
     type: Number,
     label: "Begin",
-    optional: true
+    optional: true,
   },
   "validRanges.$.end": {
     type: Number,
     label: "End",
-    optional: true
+    optional: true,
   },
-  "validLocales": {
+  validLocales: {
     type: Array,
     optional: true,
-    label: "Matching Locales"
+    label: "Matching Locales",
   },
   "validLocales.$": {
     type: Object,
-    optional: true
+    optional: true,
   },
   "validLocales.$.origination": {
     type: String,
     label: "From",
-    optional: true
+    optional: true,
   },
   "validLocales.$.destination": {
     type: String,
     label: "To",
-    optional: true
+    optional: true,
   },
   "validLocales.$.deliveryBegin": {
     type: SimpleSchema.Integer,
     label: "Shipping Est.",
-    optional: true
+    optional: true,
   },
   "validLocales.$.deliveryEnd": {
     type: SimpleSchema.Integer,
     label: "Delivery Est.",
-    optional: true
+    optional: true,
   },
-  "carrier": { // kind of denormalizing, useful for having it in shipmentMethod( cart & order)
+  carrier: {
+    // kind of denormalizing, useful for having it in shipmentMethod( cart & order)
     type: String, // Alternatively we can make an extra Schema:ShipmentMethod, that inherits
-    optional: true // ShippingMethod and add the optional carrier field
+    optional: true, // ShippingMethod and add the optional carrier field
   },
-  "settings": {
+  settings: {
     type: ShippoShippingMethod,
-    optional: true
+    optional: true,
   },
-  "fulfillmentTypes": {
-    type: Array
+  fulfillmentTypes: {
+    type: Array,
   },
-  "fulfillmentTypes.$": String
+  "fulfillmentTypes.$": String,
 });
 
 /**
@@ -325,27 +387,27 @@ const ShippingMethod = new SimpleSchema({
  */
 export const ShipmentQuote = new SimpleSchema({
   carrier: {
-    type: String
+    type: String,
   },
   handlingPrice: {
     type: Number,
-    optional: true
+    optional: true,
   },
   method: {
-    type: ShippingMethod
+    type: ShippingMethod,
   },
   rate: {
     type: Number,
-    defaultValue: 0.00
+    defaultValue: 0.0,
   },
   shippingPrice: {
     type: Number,
-    optional: true
+    optional: true,
   },
   shopId: {
     type: String,
-    optional: true
-  }
+    optional: true,
+  },
 });
 
 /**
@@ -361,24 +423,24 @@ export const ShipmentQuote = new SimpleSchema({
 const ShippingParcel = new SimpleSchema({
   containers: {
     type: String,
-    optional: true
+    optional: true,
   },
   length: {
     type: Number,
-    optional: true
+    optional: true,
   },
   width: {
     type: Number,
-    optional: true
+    optional: true,
   },
   height: {
     type: Number,
-    optional: true
+    optional: true,
   },
   weight: {
     type: Number,
-    optional: true
-  }
+    optional: true,
+  },
 });
 
 /**
@@ -393,16 +455,17 @@ const ShippingParcel = new SimpleSchema({
 const ShippoShipment = new SimpleSchema({
   transactionId: {
     type: String,
-    optional: true
+    optional: true,
   },
-  trackingStatusStatus: { // cause tracking_status.status
+  trackingStatusStatus: {
+    // cause tracking_status.status
     type: String,
-    optional: true
+    optional: true,
   },
   trackingStatusDate: {
     type: String,
-    optional: true
-  }
+    optional: true,
+  },
 });
 
 /**
@@ -422,20 +485,20 @@ const ShipmentQuotesQueryStatus = new SimpleSchema({
   requestStatus: {
     type: String,
     optional: true,
-    defaultValue: "noRequestsYet"
+    defaultValue: "noRequestsYet",
   },
   shippingProvider: {
     type: String,
-    optional: true
+    optional: true,
   },
   numOfShippingMethodsFound: {
     type: SimpleSchema.Integer,
-    optional: true
+    optional: true,
   },
   message: {
     type: String,
-    optional: true
-  }
+    optional: true,
+  },
 });
 
 /**
@@ -448,15 +511,15 @@ const ShipmentQuotesQueryStatus = new SimpleSchema({
  * @property {String[]} workflow optional
  */
 const Workflow = new SimpleSchema({
-  "status": {
+  status: {
     type: String,
-    defaultValue: "new"
+    defaultValue: "new",
   },
-  "workflow": {
+  workflow: {
     type: Array,
-    optional: true
+    optional: true,
   },
-  "workflow.$": String
+  "workflow.$": String,
 });
 
 /**
@@ -476,36 +539,36 @@ export const CartInvoice = new SimpleSchema({
   currencyCode: String,
   discounts: {
     type: Number,
-    min: 0
+    min: 0,
   },
   effectiveTaxRate: {
     type: Number,
-    min: 0
+    min: 0,
   },
   shipping: {
     type: Number,
-    min: 0
+    min: 0,
   },
   subtotal: {
     type: Number,
-    min: 0
+    min: 0,
   },
   surcharges: {
     type: Number,
-    min: 0
+    min: 0,
   },
   taxes: {
     type: Number,
-    min: 0
+    min: 0,
   },
   taxableAmount: {
     type: Number,
-    min: 0
+    min: 0,
   },
   total: {
     type: Number,
-    min: 0
-  }
+    min: 0,
+  },
 });
 
 /**
@@ -533,100 +596,126 @@ export const CartInvoice = new SimpleSchema({
  * @property {ShippoShipment} shippo For Shippo specific properties
  */
 const Shipment = new SimpleSchema({
-  "_id": {
+  _id: {
     type: String,
-    label: "Shipment Id"
+    label: "Shipment Id",
   },
-  "shopId": {
-    type: String
+  shopId: {
+    type: String,
   },
-  "paymentId": {
+  paymentId: {
     type: String,
     label: "Payment Id",
-    optional: true
+    optional: true,
   },
-  "address": {
+  address: {
     type: CartAddress,
-    optional: true
+    optional: true,
   },
-  "shipmentMethod": {
+  shipmentMethod: {
     type: ShippingMethod,
-    optional: true
+    optional: true,
   },
-  "shipmentQuotes": {
+  shipmentQuotes: {
     type: Array,
-    optional: true
+    optional: true,
   },
   "shipmentQuotes.$": {
     type: ShipmentQuote,
-    optional: true
+    optional: true,
   },
-  "shipmentQuotesQueryStatus": {
+  shipmentQuotesQueryStatus: {
     type: ShipmentQuotesQueryStatus,
     optional: true,
-    defaultValue: {}
+    defaultValue: {},
   },
-  "tracking": {
+  tracking: {
     type: String,
-    optional: true
+    optional: true,
   },
-  "type": {
+  type: {
     type: String,
     allowedValues: ["shipping"],
-    defaultValue: "shipping"
+    defaultValue: "shipping",
   },
-  "parcel": {
+  parcel: {
     type: ShippingParcel,
-    optional: true
+    optional: true,
   },
-  "workflow": {
+  workflow: {
     type: Workflow,
     optional: true,
-    defaultValue: {}
+    defaultValue: {},
   },
-  "invoice": {
+  invoice: {
     type: CartInvoice,
-    optional: true
+    optional: true,
   },
-  "itemIds": {
+  itemIds: {
     type: Array,
-    optional: true
+    optional: true,
   },
   "itemIds.$": String,
-  "transactions": {
+  transactions: {
     type: Array,
-    optional: true
+    optional: true,
   },
   "transactions.$": {
     type: Object,
     optional: true,
-    blackbox: true
+    blackbox: true,
   },
-  "shippingLabelUrl": {
+  shippingLabelUrl: {
     type: String,
-    optional: true
+    optional: true,
   },
-  "customsLabelUrl": {
+  customsLabelUrl: {
     type: String,
-    optional: true
+    optional: true,
   },
-  "shippo": {
+  shippo: {
     type: ShippoShipment,
-    optional: true
-  }
+    optional: true,
+  },
 });
 
 const Money = new SimpleSchema({
-  currencyCode: String,
+  _id: {
+    type: String,
+    optional: true,
+  },
+  currencyCode: {
+    type: String,
+    optional: true,
+  },
   amount: {
     type: Number,
-    min: 0
+    optional: true,
   },
   base: {
     type: Number,
-    min: 0,
-    optional:true
-  }
+    optional: true,
+  },
+  maxFreeQty: {
+    type: Number,
+    optional: true,
+  },
+  maxQty: {
+    type: Number,
+    optional: true,
+  },
+  minQty: {
+    type: Number,
+    optional: true,
+  },
+  
+});
+
+Money.extend({
+  variant: {
+    type: Money.clone(),
+    optional: true,
+  },
 });
 
 /**
@@ -640,8 +729,8 @@ const CartItemAttribute = new SimpleSchema({
   label: String,
   value: {
     type: String,
-    optional: true
-  }
+    optional: true,
+  },
 });
 
 /**
@@ -670,86 +759,86 @@ const CartItemAttribute = new SimpleSchema({
  * @property {String} variantTitle Title from the selected variant
  */
 export const CartItem = new SimpleSchema({
-  "_id": String,
-  "addedAt": Date,
-  "cartCatalogId": {
+  _id: String,
+  addedAt: Date,
+  cartCatalogId: {
     type: String,
-    optional: true
+    optional: true,
   },
-  "attributes": {
+  attributes: {
     type: Array,
-    optional: true
+    optional: true,
   },
   "attributes.$": CartItemAttribute,
-  "compareAtPrice": {
+  compareAtPrice: {
     type: Money,
-    optional: true
+    optional: true,
   },
-  "createdAt": Date,
-  "metafields": {
+  createdAt: Date,
+  metafields: {
     type: Array,
-    optional: true
+    optional: true,
   },
   "metafields.$": Metafield,
-  "optionTitle": {
+  optionTitle: {
     type: String,
-    optional: true
+    optional: true,
   },
-  "parcel": {
+  parcel: {
     type: ShippingParcel,
-    optional: true
+    optional: true,
   },
-  "price": Money,
-  "priceWhenAdded": Money,
-  "productId": String,
-  "productSlug": {
+  price: Money,
+  priceWhenAdded: Money,
+  productId: String,
+  productSlug: {
     type: String,
-    optional: true
+    optional: true,
   },
-  "productType": {
+  productType: {
     label: "Product Type",
     type: String,
-    optional: true
+    optional: true,
   },
-  "productTagIds": {
+  productTagIds: {
     label: "Product Tags",
     type: Array,
-    optional: true
+    optional: true,
   },
   "productTagIds.$": String,
-  "productVendor": {
+  productVendor: {
     label: "Product Vendor",
     type: String,
-    optional: true
+    optional: true,
   },
-  "quantity": {
+  quantity: {
     label: "Quantity",
     type: SimpleSchema.Integer,
-    min: 0
+    min: 0,
   },
-  "shopId": {
+  shopId: {
     type: String,
-    label: "Cart Item shopId"
+    label: "Cart Item shopId",
   },
-  "subtotal": Money,
-  "title": {
+  subtotal: Money,
+  title: {
     type: String,
-    label: "CartItem Title"
+    label: "CartItem Title",
   },
-  "transaction": {
+  transaction: {
     type: Object,
     optional: true,
-    blackbox: true
+    blackbox: true,
   },
-  "updatedAt": Date,
-  "variantId": {
+  updatedAt: Date,
+  variantId: {
     type: String,
-    optional: true
+    optional: true,
   },
-  "variantTitle": {
+  variantTitle: {
     type: String,
-    optional: true
-  }
+    optional: true,
+  },
 });
 
 /**
@@ -772,105 +861,105 @@ export const CartItem = new SimpleSchema({
  * @property {String} sessionId Optional and deprecated
  */
 export const Cart = new SimpleSchema({
-  "_id": {
-    type: String,
-    optional: true
-  },
-  "shopId": {
-    type: String,
-    label: "Cart ShopId"
-  },
-  "accountId": {
-    type: String,
-    optional: true
-  },
-  "anonymousAccessToken": {
-    type: String,
-    optional: true
-  },
-  "currencyCode": String,
-  "billingAddress": {
-    type: CartAddress,
-    optional: true
-  },
-  "referenceId": {
-    type: String,
-    optional: true
-  },
-  "sessionId": {
-    type: String,
-    optional: true
-  },
-  "email": {
+  _id: {
     type: String,
     optional: true,
-    regEx: SimpleSchema.RegEx.Email
   },
-  "items": {
+  shopId: {
+    type: String,
+    label: "Cart ShopId",
+  },
+  accountId: {
+    type: String,
+    optional: true,
+  },
+  anonymousAccessToken: {
+    type: String,
+    optional: true,
+  },
+  currencyCode: String,
+  billingAddress: {
+    type: CartAddress,
+    optional: true,
+  },
+  referenceId: {
+    type: String,
+    optional: true,
+  },
+  sessionId: {
+    type: String,
+    optional: true,
+  },
+  email: {
+    type: String,
+    optional: true,
+    regEx: SimpleSchema.RegEx.Email,
+  },
+  items: {
     type: Array,
-    optional: true
+    optional: true,
   },
   "items.$": {
-    type: CartItem
+    type: CartItem,
   },
-  "catalogs": {
+  catalogs: {
     type: Array,
-    optional: true
+    optional: true,
   },
   "catalogs.$": {
     type: Object,
-    blackbox: true
+    blackbox: true,
   },
-  "missingItems": {
+  missingItems: {
     type: Array,
-    optional: true
+    optional: true,
   },
   "missingItems.$": {
-    type: CartItem
+    type: CartItem,
   },
-  "shipping": {
+  shipping: {
     type: Array,
-    optional: true
+    optional: true,
   },
   "shipping.$": {
-    type: Shipment
+    type: Shipment,
   },
   /* Working to get rid of cart.billing, but currently still where discounts are applied to carts */
-  "billing": {
+  billing: {
     type: Array,
-    optional: true
+    optional: true,
   },
   "billing.$": {
     type: Object,
-    blackbox: true
+    blackbox: true,
   },
-  "bypassAddressValidation": {
+  bypassAddressValidation: {
     type: Boolean,
     optional: true,
-    defaultValue: false
+    defaultValue: false,
   },
-  "discount": {
+  discount: {
     type: Number,
-    optional: true
+    optional: true,
   },
-  "surcharges": {
+  surcharges: {
     type: Array,
-    optional: true
+    optional: true,
   },
   "surcharges.$": {
     type: Object,
-    blackbox: true
+    blackbox: true,
   },
-  "workflow": {
+  workflow: {
     type: Workflow,
     optional: true,
-    defaultValue: {}
+    defaultValue: {},
   },
-  "createdAt": {
-    type: Date
-  },
-  "updatedAt": {
+  createdAt: {
     type: Date,
-    optional: true
-  }
+  },
+  updatedAt: {
+    type: Date,
+    optional: true,
+  },
 });

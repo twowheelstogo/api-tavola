@@ -1,6 +1,6 @@
 import SimpleSchema from "simpl-schema";
 import getCartById from "../util/getCartById.js";
-import accounting from "accounting-js";
+import cartCatalogsRefresh from "../util/cartCatalogsRefresh.js";
 const inputSchema = new SimpleSchema({
   cartId: String,
   catalogs: {
@@ -37,40 +37,39 @@ export default async function updateCartCatalogsQuantity(context, input) {
   const { cartId, catalogs, cartToken } = input;
 
   const cart = await getCartById(context, cartId, { cartToken, throwIfNotFound: true });
-  let items = cart.items;
-  const updatedCatalogs = cart.catalogs.reduce((list, catalog) => {
-    const update = catalogs.find(({ cartCatalogId }) => cartCatalogId === catalog._id);
-    console.info("updateCartCatalogsQuantity : update", update);
-    if (!update) {
-      list.push({ ...catalog });
-    } else if (update.quantity > 0) {
-      let priceTotal = 0.0
-      items.map((item) => {
-        if (item.cartCatalogId !== update.cartCatalogId) return item;
-        // Match
-        const total = item.subtotal.base * update.quantity;
-        item.subtotal.amount = +accounting.toFixed(total, 3);
-        priceTotal += total;
-      });
-      // Update quantity as instructed, while omitting the catalog if quantity is 0
-      list.push({
-        ...catalog,
-        quantity: update.quantity,
-        // Update the subtotal since it is a multiple of the price
-        subtotal: {
-          amount: priceTotal,
-          currencyCode: catalog.subtotal.currencyCode,
-        },
-      });
-      console.info("updateCartCatalogsQuantity : quantity, priceTotal", update.quantity, priceTotal);
-    }
-    return list;
-  }, []);
+  // let items = cart.items;
+  // const updatedCatalogs = cart.catalogs.reduce((list, catalog) => {
+  //   const update = catalogs.find(({ cartCatalogId }) => cartCatalogId === catalog._id);
+  //   console.info("updateCartCatalogsQuantity : update", update);
+  //   if (!update) {
+  //     list.push({ ...catalog });
+  //   } else if (update.quantity > 0) {
+  //     let priceTotal = 0.0
+  //     items.map((item) => {
+  //       if (item.cartCatalogId !== update.cartCatalogId) return item;
+  //       // Match
+  //       const total = item.subtotal.base * update.quantity;
+  //       item.subtotal.amount = +accounting.toFixed(total, 3);
+  //       priceTotal += total;
+  //     });
+  //     // Update quantity as instructed, while omitting the catalog if quantity is 0
+  //     list.push({
+  //       ...catalog,
+  //       quantity: update.quantity,
+  //       // Update the subtotal since it is a multiple of the price
+  //       subtotal: {
+  //         amount: priceTotal,
+  //         currencyCode: catalog.subtotal.currencyCode,
+  //       },
+  //     });
+  //     console.info("updateCartCatalogsQuantity : quantity, priceTotal", update.quantity, priceTotal);
+  //   }
+  //   return list;
+  // }, []);
 
   const updatedCart = {
     ...cart,
-    catalogs: updatedCatalogs,
-    items,
+    ...cartCatalogsRefresh({catalogs: cart.catalogs, items:cart.items, ucatalogs: catalogs}).updated,
     updatedAt: new Date(),
   };
 

@@ -1,5 +1,6 @@
 import SimpleSchema from "simpl-schema";
 import getCartById from "../util/getCartById.js";
+import cartCatalogsRefresh from "../util/cartCatalogsRefresh.js";
 
 const inputSchema = new SimpleSchema({
   "cartId": String,
@@ -42,28 +43,42 @@ export default async function updateCartItemsQuantity(context, input) {
 
   const cart = await getCartById(context, cartId, { cartToken, throwIfNotFound: true });
 
-  const updatedItems = cart.items.reduce((list, item) => {
-    const update = items.find(({ cartItemId }) => cartItemId === item._id);
-    if (!update) {
-      list.push({ ...item });
-    } else if (update.quantity > 0) {
-      // Update quantity as instructed, while omitting the item if quantity is 0
-      list.push({
-        ...item,
-        quantity: update.quantity,
-        // Update the subtotal since it is a multiple of the price
-        subtotal: {
-          amount: item.price.amount * update.quantity,
-          currencyCode: item.subtotal.currencyCode
-        }
-      });
-    }
-    return list;
-  }, []);
+  // updated.catalogs = (cart.catalogs||[]).map((catalog) => {
+  //   // let total = 
+  //   for(const item of updated.items){
+  //     if(item.cartCatlogId !== catalog._id)continue;
+  //   }
+  //   // const update = items.find(({ cartItemId }) => cartItemId === item._id);
+  //   // if (!update) {
+  //   //   list.push({ ...item });
+  //   // } else if (update.quantity > 0) {
+  //   //   // Update quantity as instructed, while omitting the item if quantity is 0
+  //   //   list.push({
+  //   //     ...item,
+  //   //     quantity: update.quantity
+  //   //   });
+  //   // }
+  //   // return list;
+  // }),
+
+
 
   const updatedCart = {
     ...cart,
-    items: updatedItems,
+    // items: updatedItems,
+    ...cartCatalogsRefresh({catalogs: cart.catalogs, items:cart.items.reduce((list, item) => {
+      const update = items.find(({ cartItemId }) => cartItemId === item._id);
+      if (!update) {
+        list.push({ ...item });
+      } else if (update.quantity > 0) {
+        // Update quantity as instructed, while omitting the item if quantity is 0
+        list.push({
+          ...item,
+          quantity: update.quantity
+        });
+      }
+      return list;
+    }, []) , ucatalogs: catalogs}).updated,
     updatedAt: new Date()
   };
 

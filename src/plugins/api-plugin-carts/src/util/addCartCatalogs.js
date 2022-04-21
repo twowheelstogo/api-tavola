@@ -52,155 +52,170 @@ export default async function addCartCatalogs(context, cart, input, options = {}
   ///      Items
   ///|\\\|///|\\\|///|\\\
   await Promise.all(
-    input.items.map(async (inputItem) => {
-      const { metafields, productConfiguration, quantity, price, cartCatalogId } = inputItem;
-      const { productId, productVariantId } = productConfiguration;
+    input.items
+      .map(async (inputItem) => {
+        const { metafields, productConfiguration, quantity, price, cartCatalogId } = inputItem;
+        if (!productConfiguration) {
+          console.info("Error addCartCatalog productConfiguration", productConfiguration);
+          return null;
+        }
+        const { productId, productVariantId } = productConfiguration;
 
-      // Get the published product from the DB, in order to get variant title and check price.
-      // This could be done outside of the loop to reduce db hits, but 99% of the time inputItems
-      // will have only one item, so we can skip that optimization for now in favor of cleaner code.
-      const {
-        catalogProduct,
-        parentVariant,
-        variant: chosenVariant,
-      } = await queries.findProductAndVariant(context, productId, productVariantId);
+        // Get the published product from the DB, in order to get variant title and check price.
+        // This could be done outside of the loop to reduce db hits, but 99% of the time inputItems
+        // will have only one item, so we can skip that optimization for now in favor of cleaner code.
+        const {
+          catalogProduct,
+          parentVariant,
+          variant: chosenVariant,
+        } = await queries.findProductAndVariant(context, productId, productVariantId);
 
-      const variantPriceInfo = await queries.getVariantPrice(context, chosenVariant, price.currencyCode);
-      if (!variantPriceInfo) {
-        throw new ReactionError(
-          "invalid-param",
-          `This product variant does not have a price for ${price.currencyCode}`
-        );
-      }
-      if (options.skipPriceCheck !== true && variantPriceInfo.price !== price.amount) {
-        incorrectPriceFailures.push({
-          currentPrice: {
-            amount: variantPriceInfo.price,
-            currencyCode: price.currencyCode,
-          },
-          productConfiguration,
-          providedPrice: price,
-        });
-        return;
-      }
+        const variantPriceInfo = await queries.getVariantPrice(context, chosenVariant, price.currencyCode);
+        if (!variantPriceInfo) {
+          throw new ReactionError(
+            "invalid-param",
+            `This product variant does not have a price for ${price.currencyCode}`
+          );
+        }
+        if (options.skipPriceCheck !== true && variantPriceInfo.price !== price.amount) {
+          incorrectPriceFailures.push({
+            currentPrice: {
+              amount: variantPriceInfo.price,
+              currencyCode: price.currencyCode,
+            },
+            productConfiguration,
+            providedPrice: price,
+          });
+          return;
+        }
 
-      // Check minimum order quantity
-      const minOrderQuantity = chosenVariant.minOrderQuantity || 1;
-      if (quantity < minOrderQuantity) {
-        minOrderQuantityFailures.push({
-          minOrderQuantity,
-          productConfiguration,
-          quantity,
-        });
-        return;
-      }
+        // Check minimum order quantity
+        const minOrderQuantity = chosenVariant.minOrderQuantity || 1;
+        if (quantity < minOrderQuantity) {
+          minOrderQuantityFailures.push({
+            minOrderQuantity,
+            productConfiguration,
+            quantity,
+          });
+          return;
+        }
 
-      // Note that we do not check inventory quantity here. We will assume that the client
-      // knows what it is doing and may want to add items that are not available. Quantity
-      // checks at the time of placing the order will ensure that unavailable items are
-      // not ordered unless back-ordering is enabled.
+        // Note that we do not check inventory quantity here. We will assume that the client
+        // knows what it is doing and may want to add items that are not available. Quantity
+        // checks at the time of placing the order will ensure that unavailable items are
+        // not ordered unless back-ordering is enabled.
 
-      // Until we do a more complete attributes revamp, we'll do our best to fudge attributes here.
-      const attributes = [];
-      if (parentVariant) {
+        // Until we do a more complete attributes revamp, we'll do our best to fudge attributes here.
+        const attributes = [];
+        if (parentVariant) {
+          attributes.push({
+            label: parentVariant.attributeLabel,
+            value: parentVariant.optionTitle,
+          });
+        }
         attributes.push({
-          label: parentVariant.attributeLabel,
-          value: parentVariant.optionTitle,
+          label: chosenVariant.attributeLabel,
+          value: chosenVariant.optionTitle,
         });
-      }
-      attributes.push({
-        label: chosenVariant.attributeLabel,
-        value: chosenVariant.optionTitle,
-      });
 
-      ///|\\\|///|\\\|///|\\\
-      ///      Sort
-      ///|\\\|///|\\\|///|\\\
-      // Catalogs
-      if (!catalogs[cartCatalogId]) {
-        catalogs[cartCatalogId] = {
-          product: catalogProduct,
-          catalog: {
-            _id: cartCatalogId,
-            quantity: 1,
-            shopId: catalogProduct.shopId,
-            title: catalogProduct.title,
-            updatedAt: currentDateTime,
-            addedAt: currentDateTime,
-            createdAt: currentDateTime,
-            subtotal: { currencyCode: price.currencyCode },
-            ...(cart.catalogs || []).find((c) => c._id === cartCatalogId),
-            ...(input.catalogs || []).find((c) => c._id === cartCatalogId),
-          },
-          variants: {},
-        };
-        catalogs[cartCatalogId].catalog.subtotal.currencyCode = price.currencyCode;
-      }
-      // variants
-      if (!catalogs[cartCatalogId].variants[parentVariant.variantId])
-        catalogs[cartCatalogId].variants[parentVariant.variantId] = {
-          variant: parentVariant,
+        ///|\\\|///|\\\|///|\\\
+        ///      Sort
+        ///|\\\|///|\\\|///|\\\
+        // Catalogs
+        if (!catalogs[cartCatalogId]) {
+          catalogs[cartCatalogId] = {
+            product: catalogProduct,
+            catalog: {
+              _id: cartCatalogId,
+              quantity: 1,
+              shopId: catalogProduct.shopId,
+              title: catalogProduct.title,
+              updatedAt: currentDateTime,
+              addedAt: currentDateTime,
+              createdAt: currentDateTime,
+              subtotal: { currencyCode: price.currencyCode },
+              price: {
+                ...lodash.pick(catalogProduct.pricing[price.currencyCode], ["maxFreeQty", "maxQty", "minQty"]),
+              },
+              ...(cart.catalogs || []).find((c) => c._id === cartCatalogId),
+              ...(input.catalogs || []).find((c) => c._id === cartCatalogId),
+            },
+            variants: {},
+          };
+          catalogs[cartCatalogId].catalog.subtotal.currencyCode = price.currencyCode;
+        }
+        // variants
+        if (!catalogs[cartCatalogId].variants[parentVariant.variantId])
+          catalogs[cartCatalogId].variants[parentVariant.variantId] = {
+            variant: parentVariant,
+            pricing: {
+              maxFreeQty: 0,
+              ...parentVariant.pricing[price.currencyCode],
+            },
+            items: {},
+          };
+        // options
+        catalogs[cartCatalogId].variants[parentVariant.variantId].items[chosenVariant.variantId] = {
+          option: chosenVariant,
           pricing: {
             maxFreeQty: 0,
-            ...parentVariant.pricing[price.currencyCode],
+            ...chosenVariant.pricing[price.currencyCode],
           },
-          items: {},
+          item: {
+            addedAt: currentDateTime,
+            createdAt: currentDateTime,
+            ...(cart.items || []).find((i) => i.productId === productId && i.variantId === productVariantId),
+            _id: Random.id(),
+            cartCatalogId,
+            attributes,
+            isTaxable: chosenVariant.isTaxable || false,
+            metafields,
+            optionTitle: chosenVariant.optionTitle,
+            parcel: chosenVariant.parcel,
+            // This one will be kept updated by event handler watching for
+            // catalog changes whereas `priceWhenAdded` will not.
+            price: {
+              amount: variantPriceInfo.price,
+              currencyCode: price.currencyCode,
+              ...lodash.pick(chosenVariant.pricing[price.currencyCode], ["maxFreeQty", "maxQty", "minQty"]),
+              variant: {
+                _id: parentVariant.variantId,
+                maxFreeQty: 0,
+                ...parentVariant.pricing[price.currencyCode],
+              },
+            },
+            priceWhenAdded: {
+              amount: variantPriceInfo.price,
+              currencyCode: price.currencyCode,
+            },
+            compareAtPrice:
+              variantPriceInfo.compareAtPrice && variantPriceInfo.compareAtPrice > 0
+                ? {
+                    amount: variantPriceInfo.compareAtPrice,
+                    currencyCode: price.currencyCode,
+                  }
+                : null,
+            productId,
+            productSlug: catalogProduct.slug,
+            productVendor: catalogProduct.vendor,
+            productType: catalogProduct.type,
+            productTagIds: catalogProduct.tagIds,
+            quantity,
+            shopId: catalogProduct.shopId,
+            // Subtotal will be kept updated by event handler watching for catalog changes.
+            subtotal: {
+              amount: +accounting.toFixed(variantPriceInfo.price * quantity, 3),
+              currencyCode: price.currencyCode,
+            },
+            taxCode: chosenVariant.taxCode,
+            title: catalogProduct.title,
+            updatedAt: currentDateTime,
+            variantId: productVariantId,
+            variantTitle: chosenVariant.title,
+          },
         };
-      // options
-      catalogs[cartCatalogId].variants[parentVariant.variantId].items[chosenVariant.variantId] = {
-        option: chosenVariant,
-        pricing: {
-          maxFreeQty: 0,
-          ...chosenVariant.pricing[price.currencyCode],
-        },
-        item: {
-          addedAt: currentDateTime,
-          createdAt: currentDateTime,
-          ...(cart.items || []).find((i) => i.productId === productId && i.variantId === productVariantId),
-          _id: Random.id(),
-          cartCatalogId,
-          attributes,
-          isTaxable: chosenVariant.isTaxable || false,
-          metafields,
-          optionTitle: chosenVariant.optionTitle,
-          parcel: chosenVariant.parcel,
-          // This one will be kept updated by event handler watching for
-          // catalog changes whereas `priceWhenAdded` will not.
-          price: {
-            amount: variantPriceInfo.price,
-            currencyCode: price.currencyCode,
-          },
-          priceWhenAdded: {
-            amount: variantPriceInfo.price,
-            currencyCode: price.currencyCode,
-          },
-          compareAtPrice:
-            variantPriceInfo.compareAtPrice && variantPriceInfo.compareAtPrice > 0
-              ? {
-                  amount: variantPriceInfo.compareAtPrice,
-                  currencyCode: price.currencyCode,
-                }
-              : null,
-          productId,
-          productSlug: catalogProduct.slug,
-          productVendor: catalogProduct.vendor,
-          productType: catalogProduct.type,
-          productTagIds: catalogProduct.tagIds,
-          quantity,
-          shopId: catalogProduct.shopId,
-          // Subtotal will be kept updated by event handler watching for catalog changes.
-          subtotal: {
-            amount: +accounting.toFixed(variantPriceInfo.price * quantity, 3),
-            currencyCode: price.currencyCode,
-          },
-          taxCode: chosenVariant.taxCode,
-          title: catalogProduct.title,
-          updatedAt: currentDateTime,
-          variantId: productVariantId,
-          variantTitle: chosenVariant.title,
-        },
-      };
-    })
+      })
+      .filter((h) => h)
   );
   ///|\\\|///|\\\|///|\\\
   ///      Validations & Calculate Price

@@ -360,6 +360,22 @@ export const CommonOrder = new SimpleSchema({
 });
 
 export const orderItemInputSchema = new SimpleSchema({
+  "_id": {
+    type: String,
+    optional: true
+  },
+  "cartCatalogId": {
+    type: String,
+    optional: true
+  },
+  "orderCatalogId": {
+    type: String,
+    optional: true
+  },
+  "catalogId": {
+    type: String,
+    optional: true
+  },
   "addedAt": {
     type: Date,
     optional: true
@@ -371,6 +387,41 @@ export const orderItemInputSchema = new SimpleSchema({
   "quantity": {
     type: SimpleSchema.Integer,
     min: 1
+  }
+});
+export const orderCatalogInputSchema = new SimpleSchema({
+  "_id": {
+    type: String,
+    optional: true
+  },
+  "cartCatalogId": {
+    type: String,
+    optional: true
+  },
+  "orderCatalogId": {
+    type: String,
+    optional: true
+  },
+  "catalogId": {
+    type: String,
+    optional: true
+  },
+  "addedAt": {
+    type: Date,
+    optional: true
+  },
+  "price": {
+    type: Number,
+    optional: true
+  },
+  "productId": {
+    type: String,
+    optional: true
+  },
+  "quantity": {
+    type: SimpleSchema.Integer,
+    min: 1,
+    optional: true
   }
 });
 
@@ -385,6 +436,11 @@ export const orderFulfillmentGroupInputSchema = new SimpleSchema({
     minCount: 1
   },
   "items.$": orderItemInputSchema,
+  "catalogs": {
+    type: Array,
+    optional: true
+  },
+  "catalogs.$": orderCatalogInputSchema,
   "selectedFulfillmentMethodId": String,
   "shopId": String,
   "totalPrice": {

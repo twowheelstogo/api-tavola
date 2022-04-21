@@ -10,20 +10,17 @@ import ReactionError from "@reactioncommerce/reaction-error";
  * @param {Object} cart - The cart this order is being built from
  * @returns {Promise<Object>} An order item, matching the schema needed for insertion in the Orders collection
  */
-export default async function buildOrderItem(context, { currencyCode, inputItem, cart }) {
+export default async function buildOrderItem(context, { currencyCode, inputItem, cart, catalogs }) {
   const { queries } = context;
-  const {
-    addedAt,
-    price,
-    productConfiguration,
-    quantity
-  } = inputItem;
+  const { addedAt, price, productConfiguration, quantity } = inputItem;
   const { productId, productVariantId } = productConfiguration;
+
+  const cartCatalog = { quantity: 1, ...catalogs.find((c) => c._id === inputItem.cartCatalogId) };
 
   const {
     catalogProduct: chosenProduct,
     parentVariant,
-    variant: chosenVariant
+    variant: chosenVariant,
   } = await queries.findProductAndVariant(context, productId, productVariantId);
 
   const variantPriceInfo = await queries.getVariantPrice(context, chosenVariant, currencyCode);
@@ -35,20 +32,26 @@ export default async function buildOrderItem(context, { currencyCode, inputItem,
   }
 
   if (finalPrice !== price) {
-    throw new ReactionError("invalid", `Provided price for the "${chosenVariant.title}" item does not match current published price`);
+    throw new ReactionError(
+      "invalid",
+      `Provided price for the "${chosenVariant.title}" item does not match current published price`
+    );
   }
 
   const inventoryInfo = await context.queries.inventoryForProductConfiguration(context, {
     fields: ["canBackorder", "inventoryAvailableToSell"],
     productConfiguration: {
       ...productConfiguration,
-      isSellable: true
+      isSellable: true,
     },
-    shopId: chosenProduct.shopId
+    shopId: chosenProduct.shopId,
   });
 
-  if (!inventoryInfo.canBackorder && (quantity > inventoryInfo.inventoryAvailableToSell)) {
-    throw new ReactionError("invalid-order-quantity", `Quantity ordered is more than available inventory for  "${chosenVariant.title}"`);
+  if (!inventoryInfo.canBackorder && quantity > inventoryInfo.inventoryAvailableToSell) {
+    throw new ReactionError(
+      "invalid-order-quantity",
+      `Quantity ordered is more than available inventory for  "${chosenVariant.title}"`
+    );
   }
 
   // Until we do a more complete attributes revamp, we'll do our best to fudge attributes here.
@@ -56,17 +59,18 @@ export default async function buildOrderItem(context, { currencyCode, inputItem,
   if (parentVariant) {
     attributes.push({
       label: parentVariant.attributeLabel,
-      value: parentVariant.optionTitle
+      value: parentVariant.optionTitle,
     });
   }
   attributes.push({
     label: chosenVariant.attributeLabel,
-    value: chosenVariant.optionTitle
+    value: chosenVariant.optionTitle,
   });
 
   const now = new Date();
   const newItem = {
-    _id: Random.id(),
+    // _id: Random.id(),
+    _id: inputItem._id || Random.id(),
     addedAt: addedAt || now,
     attributes,
     createdAt: now,
@@ -74,7 +78,7 @@ export default async function buildOrderItem(context, { currencyCode, inputItem,
     parcel: chosenVariant.parcel,
     price: {
       amount: finalPrice,
-      currencyCode
+      currencyCode,
     },
     productId: chosenProduct.productId,
     productSlug: chosenProduct.slug,
@@ -83,12 +87,16 @@ export default async function buildOrderItem(context, { currencyCode, inputItem,
     productVendor: chosenProduct.vendor,
     quantity,
     shopId: chosenProduct.shopId,
-    subtotal: +accounting.toFixed(quantity * finalPrice, 3),
+    subtotal: +accounting.toFixed(quantity * cartCatalog.quantity * finalPrice, 3),
+    subtotalBase: +accounting.toFixed(quantity * finalPrice, 3),
     title: chosenProduct.title,
     updatedAt: now,
     variantId: chosenVariant.variantId,
     variantTitle: chosenVariant.title,
-    workflow: { status: "new", workflow: ["coreOrderWorkflow/created", "coreItemWorkflow/removedFromInventoryAvailableToSell"] }
+    workflow: {
+      status: "new",
+      workflow: ["coreOrderWorkflow/created", "coreItemWorkflow/removedFromInventoryAvailableToSell"],
+    },
   };
 
   let cartItem;

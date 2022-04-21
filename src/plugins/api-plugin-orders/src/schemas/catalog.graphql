@@ -1,0 +1,117 @@
+extend type OrderFulfillmentGroup   { 
+
+  "The items that have been added to the cart. A cart is not created until the first item is added. Items can be removed from a cart, and a cart is not deleted if all items are removed from it. Because all items may have been removed, this may be an empty array."
+  catalogs(
+    "Return only results that come after this cursor. Use this with `first` to specify the number of results to return."
+    after: ConnectionCursor
+
+    "Return only results that come before this cursor. Use this with `last` to specify the number of results to return."
+    before: ConnectionCursor
+
+    "Return at most this many results. This parameter may be used with either `after` or `offset` parameters."
+    first: ConnectionLimitInt
+
+    "Return at most this many results. This parameter may be used with the `before` parameter."
+    last: ConnectionLimitInt
+
+    "Return only results that come after the Nth result. This parameter may be used with the `first` parameter."
+    offset: Int
+
+    "Return results sorted in this order"
+    sortOrder: SortOrder = desc
+
+    "By default, items are sorted by when they were added to the cart, newest first. Set this to sort by one of the other allowed fields"
+    sortBy: OrdersSortByField = addedAt
+  ): OrderCatalogConnection
+}
+"""
+Wraps a list of `OrderCatalog`s, providing pagination cursors and information.
+
+For information about what Relay-compatible connections are and how to use them, see the following articles:
+- [Relay Connection Documentation](https://facebook.github.io/relay/docs/en/graphql-server-specification.html#connections)
+- [Relay Connection Specification](https://facebook.github.io/relay/graphql/connections.htm)
+- [Using Relay-style Connections With Apollo Client](https://www.apollographql.com/docs/react/recipes/pagination.html)
+"""
+type OrderCatalogConnection {
+  "The list of nodes that match the query, wrapped in an edge to provide a cursor string for each"
+  edges: [OrderCatalogEdge]
+
+  """
+  You can request the `nodes` directly to avoid the extra wrapping that `NodeEdge` has,
+  if you know you will not need to paginate the results.
+  """
+  nodes: [OrderCatalog]
+
+  "Information to help a client request the next or previous page"
+  pageInfo: PageInfo!
+
+  "The total number of nodes that match your query"
+  totalCount: Int!
+}
+
+"A connection edge in which each node is a `OrderCatalog` object"
+type OrderCatalogEdge implements NodeEdge {
+  "The cursor that represents this node in the paginated results"
+  cursor: ConnectionCursor!
+ 
+  "The cart Catalog"
+  node: OrderCatalog
+}
+"""
+A single item in a cart. The item contains information about an intended purchase.
+"""
+type OrderCatalog implements Node {
+  "The cart catalog ID"
+  _id: ID!
+  productId: ID
+  items: [OrderItem]
+  """
+  The date and time at which the cart item was created. If an item is added, removed, and then added again,
+  the original item is destroyed and this field will reflect the time it was created for the most recent addition.
+  """
+  createdAt: DateTime
+  updatedAt: DateTime
+  addedAt: DateTime
+
+  "The current price of the item"
+  price: Money
+
+  "The quantity of this catalog that has been added to the cart. This must be a positive integer. Remove this `OrderCatalog` from it's associated cart if you want `0` of this item."
+  quantity: Int
+
+  "The shop associated with this cart catalog."
+  shop: Shop!
+
+  "The current price of the item multiplied by the quantity"
+  subtotal: Money
+
+  "A title for use in cart/orders that conveys the selected product's title + chosen options"
+  title: String
+} 
+
+####################
+# Inputs
+#################### 
+
+"Information about an catalog to add to a cart"
+input OrderCatalogInput {
+  "cartCatalogId"
+  _id: ID
+
+  "The Product ID"
+  productId: ID
+
+  "The number of this catalog to add to the cart"
+  quantity: Int
+} 
+
+extend input OrderFulfillmentGroupItemInput {
+  _id: ID
+  "cart catalog Id (ex: Menu Id)"
+  cartCatalogId: ID 
+} 
+
+extend input OrderFulfillmentGroupInput {
+  "Array of catalogs to be added to the cart"
+  catalogs: [OrderCatalogInput]
+}
