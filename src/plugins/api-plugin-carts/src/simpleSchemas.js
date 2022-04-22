@@ -83,12 +83,10 @@ const withoutCodeCountries = [
 const Metafield = new SimpleSchema({
   key: {
     type: String,
-    max: 30,
     optional: true,
   },
   namespace: {
     type: String,
-    max: 20,
     optional: true,
   },
   scope: {

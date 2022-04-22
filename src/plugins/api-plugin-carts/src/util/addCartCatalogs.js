@@ -1,6 +1,7 @@
 import Random from "@reactioncommerce/random";
 import SimpleSchema from "simpl-schema";
 import accounting from "accounting-js";
+import lodash from "lodash"
 import ReactionError from "@reactioncommerce/reaction-error";
 export default async function addCartCatalogs(context, cart, input, options = {}) {
   const { queries } = context;
