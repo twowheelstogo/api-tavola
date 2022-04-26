@@ -29,8 +29,8 @@ export default async function setShippingAddressOnCart(context, input) {
   // inputSchema.validate(cleanedInput);
 
   const { address = {}, addressId, cartId, cartToken } = input;
-  address._id = addressId || address._id || Random.id();
   console.log("cart.setShippingAddressOnCart", input, address);
+  address._id = addressId || address._id || Random.id();
   const cart = await getCartById(context, cartId, { cartToken, throwIfNotFound: true });
 
   let didModify = false;
