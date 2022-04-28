@@ -15,13 +15,13 @@
   "authentication": "@reactioncommerce/api-plugin-authentication",
   "authorization": "@reactioncommerce/api-plugin-authorization-simple",
   "products": "@reactioncommerce/api-plugin-products",
-  "catalogs": "@reactioncommerce/api-plugin-catalogs",
+  "catalogs": "./src/plugins/api-plugin-catalogs/src/index.js",
   "tags": "./src/plugins/api-plugin-tags/src/index.js",
   "pricingSimple": "./src/plugins/api-plugin-pricing-simple/src/index.js",
   "inventory": "@reactioncommerce/api-plugin-inventory",
   "inventorySimple": "@reactioncommerce/api-plugin-inventory-simple",
-  "carts": "./src/plugins/api-plugin-carts/index.js",
-  "orders": "./src/plugins/api-plugin-orders/src/index.js",
+  "carts": "@reactioncommerce/api-plugin-carts",
+  "orders": "@reactioncommerce/api-plugin-orders",
   "payments": "@reactioncommerce/api-plugin-payments",
   "paymentsStripeSCA": "@reactioncommerce/api-plugin-payments-stripe-sca",
   "paymentsExample": "@reactioncommerce/api-plugin-payments-example",
@@ -36,5 +36,7 @@
   "sitemapGenerator": "@reactioncommerce/api-plugin-sitemap-generator",
   "notifications": "@reactioncommerce/api-plugin-notifications",
   "addressValidationTest": "@reactioncommerce/api-plugin-address-validation-test",
-  "productVariants": "./src/plugins/api-plugin-products-variants/src/index.js"
+  "productVariants": "./src/plugins/api-plugin-products-variants/src/index.js",
+  "i18ns": "@idigi/reaction-plugin-i18ns",
+  "orderx": "@idigi/reaction-plugin-orderx"
 }
