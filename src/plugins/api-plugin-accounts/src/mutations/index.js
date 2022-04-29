@@ -19,6 +19,7 @@ import updateAccountAddressBookEntry from "./updateAccountAddressBookEntry.js";
 import updateAccountGroup from "./updateAccountGroup.js";
 import updateAdminUIAccess from "./updateAdminUIAccess.js";
 import updateGroupsForAccounts from "./updateGroupsForAccounts.js";
+import updateMetadataAddressBook from "./updateMetadataAddressBook.js";
 
 export default {
   addressBookAdd,
@@ -41,5 +42,6 @@ export default {
   updateAccountAddressBookEntry,
   updateAccountGroup,
   updateAdminUIAccess,
-  updateGroupsForAccounts
+  updateGroupsForAccounts,
+  updateMetadataAddressBook
 };

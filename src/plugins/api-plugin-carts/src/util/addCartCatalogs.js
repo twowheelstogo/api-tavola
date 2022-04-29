@@ -2,15 +2,20 @@ import Random from "@reactioncommerce/random";
 import SimpleSchema from "simpl-schema";
 import accounting from "accounting-js";
 import ReactionError from "@reactioncommerce/reaction-error";
-export default async function addCartCatalogs(context, cart, input, options = {}) {
+export default async function addCartCatalogs(
+  context,
+  cart,
+  input,
+  options = {}
+) {
   const { queries } = context;
   const incorrectPriceFailures = [];
   const minOrderQuantityFailures = [];
   const maxOrderQuantityFailures = [];
-  const updated = { items: [], catalogs: [] };
-
-  const currentDateTime = new Date();
-
+  const updated = {
+    items: items.catalogs || [],
+    catalogs: cart.catalogs || [],
+  };
   const catalogs = {};
   ///|\\\|///|\\\|///|\\\
   ///      Items
@@ -18,9 +23,18 @@ export default async function addCartCatalogs(context, cart, input, options = {}
   await Promise.all(
     input.items
       .map(async (inputItem) => {
-        const { metafields, productConfiguration, quantity, price, cartCatalogId } = inputItem;
+        const {
+          metafields,
+          productConfiguration,
+          quantity,
+          price,
+          cartCatalogId,
+        } = inputItem;
         if (!productConfiguration) {
-          console.info("Error addCartCatalog productConfiguration", productConfiguration);
+          console.info(
+            "Error addCartCatalog productConfiguration",
+            productConfiguration
+          );
           return null;
         }
         const { productId, productVariantId } = productConfiguration;
@@ -32,60 +46,26 @@ export default async function addCartCatalogs(context, cart, input, options = {}
           catalogProduct,
           parentVariant,
           variant: chosenVariant,
-        } = await queries.findProductAndVariant(context, productId, productVariantId);
+        } = await queries.findProductAndVariant(
+          context,
+          productId,
+          productVariantId
+        );
 
-        const variantPriceInfo = await queries.getVariantPrice(context, chosenVariant, price.currencyCode);
+        const variantPriceInfo = await queries.getVariantPrice(
+          context,
+          chosenVariant,
+          price.currencyCode
+        );
         if (!variantPriceInfo) {
           throw new ReactionError(
             "invalid-param",
             `This product variant does not have a price for ${price.currencyCode}`
           );
         }
-        if (options.skipPriceCheck !== true && variantPriceInfo.price !== price.amount) {
-          incorrectPriceFailures.push({
-            currentPrice: {
-              amount: variantPriceInfo.price,
-              currencyCode: price.currencyCode,
-            },
-            productConfiguration,
-            providedPrice: price,
-          });
-          return;
-        }
-
-        // Check minimum order quantity
-        const minOrderQuantity = chosenVariant.minOrderQuantity || 1;
-        if (quantity < minOrderQuantity) {
-          minOrderQuantityFailures.push({
-            minOrderQuantity,
-            productConfiguration,
-            quantity,
-          });
-          return;
-        }
-
-        // Note that we do not check inventory quantity here. We will assume that the client
-        // knows what it is doing and may want to add items that are not available. Quantity
-        // checks at the time of placing the order will ensure that unavailable items are
-        // not ordered unless back-ordering is enabled.
-
-        // Until we do a more complete attributes revamp, we'll do our best to fudge attributes here.
-        const attributes = [];
-        if (parentVariant) {
-          attributes.push({
-            label: parentVariant.attributeLabel,
-            value: parentVariant.optionTitle,
-          });
-        }
-        attributes.push({
-          label: chosenVariant.attributeLabel,
-          value: chosenVariant.optionTitle,
-        });
-
         ///|\\\|///|\\\|///|\\\
-        ///      Sort
+        ///      Catalogs
         ///|\\\|///|\\\|///|\\\
-        // Catalogs
         if (!catalogs[cartCatalogId]) {
           catalogs[cartCatalogId] = {
             product: catalogProduct,
@@ -99,16 +79,23 @@ export default async function addCartCatalogs(context, cart, input, options = {}
               createdAt: currentDateTime,
               subtotal: { currencyCode: price.currencyCode },
               price: {
-                ...lodash.pick(catalogProduct.pricing[price.currencyCode], ["maxFreeQty", "maxQty", "minQty"]),
+                ...lodash.pick(catalogProduct.pricing[price.currencyCode], [
+                  "maxFreeQty",
+                  "maxQty",
+                  "minQty",
+                ]),
               },
               ...(cart.catalogs || []).find((c) => c._id === cartCatalogId),
               ...(input.catalogs || []).find((c) => c._id === cartCatalogId),
             },
             variants: {},
           };
-          catalogs[cartCatalogId].catalog.subtotal.currencyCode = price.currencyCode;
+          catalogs[cartCatalogId].catalog.subtotal.currencyCode =
+            price.currencyCode;
         }
-        // variants
+        ///|\\\|///|\\\|///|\\\
+        ///      variants
+        ///|\\\|///|\\\|///|\\\ 
         if (!catalogs[cartCatalogId].variants[parentVariant.variantId])
           catalogs[cartCatalogId].variants[parentVariant.variantId] = {
             variant: parentVariant,
@@ -118,8 +105,12 @@ export default async function addCartCatalogs(context, cart, input, options = {}
             },
             items: {},
           };
-        // options
-        catalogs[cartCatalogId].variants[parentVariant.variantId].items[chosenVariant.variantId] = {
+        ///|\\\|///|\\\|///|\\\
+        ///      options
+        ///|\\\|///|\\\|///|\\\ 
+        catalogs[cartCatalogId].variants[parentVariant.variantId].items[
+          chosenVariant.variantId
+        ] = {
           option: chosenVariant,
           pricing: {
             maxFreeQty: 0,
@@ -128,10 +119,24 @@ export default async function addCartCatalogs(context, cart, input, options = {}
           item: {
             addedAt: currentDateTime,
             createdAt: currentDateTime,
-            ...(cart.items || []).find((i) => i.productId === productId && i.variantId === productVariantId),
+            ...(cart.items || []).find(
+              (i) =>
+                i.productId === productId && i.variantId === productVariantId
+            ),
             _id: Random.id(),
             cartCatalogId,
-            attributes,
+            attributes: [
+              ...(parentVariant
+                ? {
+                    label: parentVariant.attributeLabel,
+                    value: parentVariant.optionTitle,
+                  }
+                : []),
+              {
+                label: chosenVariant.attributeLabel,
+                value: chosenVariant.optionTitle,
+              },
+            ],
             isTaxable: chosenVariant.isTaxable || false,
             metafields,
             optionTitle: chosenVariant.optionTitle,
@@ -141,7 +146,11 @@ export default async function addCartCatalogs(context, cart, input, options = {}
             price: {
               amount: variantPriceInfo.price,
               currencyCode: price.currencyCode,
-              ...lodash.pick(chosenVariant.pricing[price.currencyCode], ["maxFreeQty", "maxQty", "minQty"]),
+              ...lodash.pick(chosenVariant.pricing[price.currencyCode], [
+                "maxFreeQty",
+                "maxQty",
+                "minQty",
+              ]),
               variant: {
                 _id: parentVariant.variantId,
                 maxFreeQty: 0,
@@ -153,7 +162,8 @@ export default async function addCartCatalogs(context, cart, input, options = {}
               currencyCode: price.currencyCode,
             },
             compareAtPrice:
-              variantPriceInfo.compareAtPrice && variantPriceInfo.compareAtPrice > 0
+              variantPriceInfo.compareAtPrice &&
+              variantPriceInfo.compareAtPrice > 0
                 ? {
                     amount: variantPriceInfo.compareAtPrice,
                     currencyCode: price.currencyCode,
@@ -181,6 +191,12 @@ export default async function addCartCatalogs(context, cart, input, options = {}
       })
       .filter((h) => h)
   );
+  console.info(`\n\n==> { catalogs }\n`, catalogs, `\n`, ``);
+  throw "Stop";
+  ///|\\\|///|\\\|///|\\\
+  ///      Return
+  ///|\\\|///|\\\|///|\\\
+  return cartCatalogsRefresh({ cart, catalogs: [], items: [] });
   ///|\\\|///|\\\|///|\\\
   ///      Validations & Calculate Price
   ///|\\\|///|\\\|///|\\\
@@ -189,9 +205,12 @@ export default async function addCartCatalogs(context, cart, input, options = {}
     for (const [variantId, variant] of Object.entries(catalog.variants)) {
       let qtyTotal = 0;
       let maxFreeQty = variant.pricing.maxFreeQty;
-      for (const [__, item] of Object.entries(variant.items).sort((a, b) => a[1].pricing.price - b[1].pricing.price)) {
+      for (const [__, item] of Object.entries(variant.items).sort(
+        (a, b) => a[1].pricing.price - b[1].pricing.price
+      )) {
         qtyTotal += item.item.quantity;
-        let finalQty = item.item.quantity - maxFreeQty - item.pricing.maxFreeQty;
+        let finalQty =
+          item.item.quantity - maxFreeQty - item.pricing.maxFreeQty;
         if (finalQty <= 0) finalQty = 0;
         const subtotal = item.pricing.price * finalQty;
         const total = subtotal * catalog.catalog.quantity;
@@ -231,42 +250,47 @@ export default async function addCartCatalogs(context, cart, input, options = {}
     ///|\\\|///|\\\|///|\\\
     catalog.catalog.subtotal.amount = +accounting.toFixed(priceTotal, 3);
   }
-  ///|\\\|///|\\\|///|\\\
-  ///      Init
-  ///|\\\|///|\\\|///|\\\
-  let cartCatalogIds = Object.keys(catalogs);
+  
+  //   ///|\\\|///|\\\|///|\\\
+  //   ///      Init
+  //   ///|\\\|///|\\\|///|\\\
+  //   let cartCatalogIds = Object.keys(catalogs);
 
-  ///|\\\|///|\\\|///|\\\
-  ///      Catalogs:Clean
-  ///|\\\|///|\\\|///|\\\
-  updated.catalogs = (cart.catalogs || [])
-    .filter((c) => !cartCatalogIds.includes(c._id))
-    .concat(Object.values(catalogs).map((c) => c.catalog))
-    .filter((c) => c.quantity)
-    .sort((a, b) => a.addedAt.getTime() - b.addedAt.getTime());
-  const hasQtycartCatalogIds = updated.catalogs.map((c) => c._id);
-  ///|\\\|///|\\\|///|\\\
-  ///      Items: Clean
-  ///|\\\|///|\\\|///|\\\
-  updated.items = (cart.items || [])
-    .filter((i) => !hasQtycartCatalogIds.includes(i.cartCatalogId) || !cartCatalogIds.includes(i._id))
-    .concat(
-      Object.values(catalogs)
-        .map((c) =>
-          Object.values(c.variants)
-            .map((v) => Object.values(v.items).map((i) => i.item))
-            .flat()
-        )
-        .flat()
-    )
-    .filter((i) => i.quantity)
-    .sort((a, b) => a.addedAt.getTime() - b.addedAt.getTime());
+  //   ///|\\\|///|\\\|///|\\\
+  //   ///      Catalogs:Clean
+  //   ///|\\\|///|\\\|///|\\\
+  //   updated.catalogs = (cart.catalogs || [])
+  //     .filter((c) => !cartCatalogIds.includes(c._id))
+  //     .concat(Object.values(catalogs).map((c) => c.catalog))
+  //     .filter((c) => c.quantity)
+  //     .sort((a, b) => a.addedAt.getTime() - b.addedAt.getTime());
+  //   const hasQtycartCatalogIds = updated.catalogs.map((c) => c._id);
+  //   ///|\\\|///|\\\|///|\\\
+  //   ///      Items: Clean
+  //   ///|\\\|///|\\\|///|\\\
+  //   updated.items = (cart.items || [])
+  //     .filter(
+  //       (i) =>
+  //         !hasQtycartCatalogIds.includes(i.cartCatalogId) ||
+  //         !cartCatalogIds.includes(i._id)
+  //     )
+  //     .concat(
+  //       Object.values(catalogs)
+  //         .map((c) =>
+  //           Object.values(c.variants)
+  //             .map((v) => Object.values(v.items).map((i) => i.item))
+  //             .flat()
+  //         )
+  //         .flat()
+  //     )
+  //     .filter((i) => i.quantity)
+  //     .sort((a, b) => a.addedAt.getTime() - b.addedAt.getTime());
 
-  console.info("addCartCatalogs", JSON.stringify(updated, null, 2));
-  return {
-    incorrectPriceFailures,
-    maxOrderQuantityFailures,
-    minOrderQuantityFailures,
-    updated,
-  };
+  //   console.info("addCartCatalogs", JSON.stringify(updated, null, 2));
+  //   return {
+  //     incorrectPriceFailures,
+  //     maxOrderQuantityFailures,
+  //     minOrderQuantityFailures,
+  //     updated,
+  //   };
 }

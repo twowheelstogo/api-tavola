@@ -60,6 +60,8 @@
     "url": "https://github.com/reactioncommerce/reaction/issues"
   },
   "dependencies": {
+    "@idigi/reaction-plugin-i18ns": "^1.0.0",
+    "@idigi/reaction-plugin-orderx": "^1.0.1",
     "@reactioncommerce/api-core": "^2.0.0",
     "@reactioncommerce/api-plugin-accounts": "^2.0.0",
     "@reactioncommerce/api-plugin-address-validation": "^1.3.1",
@@ -104,10 +106,11 @@
     "@reactioncommerce/file-collections-sa-gridfs": "^0.1.5",
     "@reactioncommerce/logger": "^1.1.3",
     "@reactioncommerce/random": "^1.0.2",
+    "@snyk/protect": "latest",
     "graphql": "~14.7.0",
+    "public-ip": "^5.0.0",
     "semver": "~6.3.0",
-    "sharp": "^0.28.3",
-    "@snyk/protect": "latest"
+    "sharp": "^0.28.3"
   },
   "devDependencies": {
     "@babel/core": "^7.7.7",

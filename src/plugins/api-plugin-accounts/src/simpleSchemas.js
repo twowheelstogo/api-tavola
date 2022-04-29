@@ -42,6 +42,90 @@ const Metafield = new SimpleSchema({
   }
 });
 
+export const Geolocation = new SimpleSchema({
+  "latitude": {
+    type: Number
+  },
+  "longitude": {
+    type: Number
+  }
+})
+
+export const DistanceMeta = new SimpleSchema({
+  "value": {
+    type: Number
+  },
+  "text": {
+    type: String
+  },
+  "branch": {
+    type: String,
+    optional: true
+  },
+  "branchId": {
+    type: String,
+    optional: true
+  }
+})
+
+export const Metaddress = new SimpleSchema({
+  "administrative_area_level_1": {
+    type: String,
+    optional: true
+  },
+  "administrative_area_level_2": {
+    type: String,
+    optional: true
+  },
+  "neighborhood": {
+    type: String,
+    optional: true
+  },
+  "street_address": {
+    type: String,
+    optional: true
+  },
+  "sublocality": {
+    type: String,
+    optional: true
+  },
+  "distance": {
+    type: DistanceMeta,
+    optional: true
+  }
+})
+
+export const CustomAccountProfileAddress = new SimpleSchema({
+  "_id": String,
+  "description": {
+    type: String,
+    label: "Description"
+  },
+  "address": {
+    type: String,
+    label: "Address"
+  },
+  "reference": {
+    type: String,
+    label: "Reference"
+  },
+  "geolocation": {
+    type: Geolocation,
+    optional: true
+  },
+  "metaddress": {
+    type: Metaddress,
+    optional: true
+  },
+  "receiver": {
+    type: String,
+    optional: true
+  },
+  "phone": {
+    type: String,
+    optional: true
+  }
+})
 const withoutCodeCountries = ["AO", "AG", "AW", "BS", "BZ", "BJ", "BW",
   "BF", "BI", "CM", "CF", "KM", "CG", "CD", "CK", "CI", "DJ",
   "DM", "GQ", "ER", "FJ", "TF", "GM", "GH", "GD", "GN", "GY",
@@ -200,7 +284,7 @@ export const Profile = new SimpleSchema({
     optional: true
   },
   "addressBook.$": {
-    type: AccountProfileAddress
+    type: CustomAccountProfileAddress
   },
   "firstName": {
     type: String,
@@ -246,6 +330,11 @@ export const Profile = new SimpleSchema({
     label: "User preferences",
     type: Object,
     blackbox: true,
+    optional: true
+  },
+  "phone": {
+    label: "User phone",
+    type: String,
     optional: true
   }
 });
@@ -297,7 +386,10 @@ export const Email = new SimpleSchema({
  */
 export const Account = new SimpleSchema({
   "_id": String,
-  "userId": String,
+  "userId": {
+    type: String,
+    optional: true
+  },
   "sessions": {
     type: Array,
     optional: true
