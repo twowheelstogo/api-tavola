@@ -83,12 +83,10 @@ const withoutCodeCountries = [
 const Metafield = new SimpleSchema({
   key: {
     type: String,
-    max: 30,
     optional: true,
   },
   namespace: {
     type: String,
-    max: 20,
     optional: true,
   },
   scope: {
@@ -788,7 +786,8 @@ export const CartItem = new SimpleSchema({
     type: ShippingParcel,
     optional: true,
   },
-  price: Money,
+  // price: Money,
+  price: {type: Object, optional:true, blackbox:true},
   priceWhenAdded: Money,
   productId: String,
   productSlug: {

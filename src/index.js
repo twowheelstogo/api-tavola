@@ -6,7 +6,6 @@ const api = new ReactionAPICore({
   serveStaticPaths: ["public"],
   version: packageJson.version
 });
-
 /**
  * @summary Registers Reaction API plugins and then starts the app
  * @return {Promise<undefined>} undefined

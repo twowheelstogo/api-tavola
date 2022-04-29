@@ -15,7 +15,7 @@
   "authentication": "@reactioncommerce/api-plugin-authentication",
   "authorization": "@reactioncommerce/api-plugin-authorization-simple",
   "products": "@reactioncommerce/api-plugin-products",
-  "catalogs": "@reactioncommerce/api-plugin-catalogs",
+  "catalogs": "./src/plugins/api-plugin-catalogs/src/index.js",
   "tags": "./src/plugins/api-plugin-tags/src/index.js",
   "pricingSimple": "./src/plugins/api-plugin-pricing-simple/src/index.js",
   "inventory": "@reactioncommerce/api-plugin-inventory",
@@ -38,5 +38,5 @@
   "addressValidationTest": "@reactioncommerce/api-plugin-address-validation-test",
   "productVariants": "./src/plugins/api-plugin-products-variants/src/index.js",
   "i18ns": "@idigi/reaction-plugin-i18ns",
-  "orderx": "./src/plugins/reaction-plugin-orderx/src/index.js"
+  "orderx": "@idigi/reaction-plugin-orderx"
 }

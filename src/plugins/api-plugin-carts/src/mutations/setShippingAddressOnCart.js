@@ -7,13 +7,13 @@ const inputSchema = new SimpleSchema({
   address: AddressSchema,
   addressId: {
     type: String,
-    optional: true
+    optional: true,
   },
   cartId: String,
   cartToken: {
     type: String,
-    optional: true
-  }
+    optional: true,
+  },
 });
 
 /**
@@ -25,12 +25,12 @@ const inputSchema = new SimpleSchema({
  * @returns {Promise<Object>} An object with a `cart` property containing the updated cart
  */
 export default async function setShippingAddressOnCart(context, input) {
-  const cleanedInput = inputSchema.clean(input); // add default values and such
-  inputSchema.validate(cleanedInput);
+  // const cleanedInput = inputSchema.clean(input); // add default values and such
+  // inputSchema.validate(cleanedInput);
 
-  const { address, addressId, cartId, cartToken } = cleanedInput;
-  address._id = addressId || Random.id();
-
+  const { address = {}, addressId, cartId, cartToken } = input;
+  console.log("cart.setShippingAddressOnCart", input, address);
+  address._id = addressId || address._id || Random.id();
   const cart = await getCartById(context, cartId, { cartToken, throwIfNotFound: true });
 
   let didModify = false;
@@ -47,7 +47,7 @@ export default async function setShippingAddressOnCart(context, input) {
   const updatedCart = {
     ...cart,
     shipping: updatedFulfillmentGroups,
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 
   const savedCart = await context.mutations.saveCart(context, updatedCart);
