@@ -3,7 +3,7 @@ import ReactionError from "@reactioncommerce/reaction-error";
 import { AccountProfileAddress } from "../simpleSchemas.js";
 
 const inputSchema = new SimpleSchema({
-  address: AccountProfileAddress,
+  address: {type:Object, blackbox:true},
   accountId: String,
   type: {
     type: String,
@@ -94,6 +94,7 @@ export default async function updateAccountAddressBookEntry(context, input) {
     updatedBy: userIdFromContext,
     updatedFields
   });
+  console.info("LOG: updateAccountAddressBookEntry", updatedAccount);
 
   // // If the address update was successful, then return the full updated address.
   // // Since we just pushed into `profile.addressBook`, we know it will exist.

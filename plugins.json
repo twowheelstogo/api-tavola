@@ -20,7 +20,7 @@
   "pricingSimple": "./src/plugins/api-plugin-pricing-simple/src/index.js",
   "inventory": "@reactioncommerce/api-plugin-inventory",
   "inventorySimple": "@reactioncommerce/api-plugin-inventory-simple",
-  "carts": "@reactioncommerce/api-plugin-carts",
+  "carts": "./src/plugins/api-plugin-carts/src/index.js",
   "orders": "@reactioncommerce/api-plugin-orders",
   "payments": "@reactioncommerce/api-plugin-payments",
   "paymentsStripeSCA": "@reactioncommerce/api-plugin-payments-stripe-sca",
@@ -38,5 +38,6 @@
   "addressValidationTest": "@reactioncommerce/api-plugin-address-validation-test",
   "productVariants": "./src/plugins/api-plugin-products-variants/src/index.js",
   "i18ns": "@idigi/reaction-plugin-i18ns",
-  "orderx": "@idigi/reaction-plugin-orderx"
+  "orderx": "@idigi/reaction-plugin-orderx",
+  "branch": "./src/plugins/api-plugin-branch/src/index.js"
 }

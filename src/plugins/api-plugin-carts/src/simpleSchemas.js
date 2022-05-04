@@ -607,8 +607,9 @@ const Shipment = new SimpleSchema({
     optional: true,
   },
   address: {
-    type: CartAddress,
+    type: Object,
     optional: true,
+    blackbox: true,
   },
   shipmentMethod: {
     type: ShippingMethod,
@@ -706,7 +707,6 @@ const Money = new SimpleSchema({
     type: Number,
     optional: true,
   },
-  
 });
 
 Money.extend({
@@ -787,7 +787,7 @@ export const CartItem = new SimpleSchema({
     optional: true,
   },
   // price: Money,
-  price: {type: Object, optional:true, blackbox:true},
+  price: { type: Object, optional: true, blackbox: true },
   priceWhenAdded: Money,
   productId: String,
   productSlug: {
@@ -878,8 +878,9 @@ export const Cart = new SimpleSchema({
   },
   currencyCode: String,
   billingAddress: {
-    type: CartAddress,
+    type: Object,
     optional: true,
+    blackbox: true,
   },
   referenceId: {
     type: String,

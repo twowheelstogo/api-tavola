@@ -52,5 +52,6 @@ export default async function setShippingAddressOnCart(context, input) {
 
   const savedCart = await context.mutations.saveCart(context, updatedCart);
 
+  console.info("LOG: setShippingAddressOnCart", JSON.stringify(savedCart.shipping));
   return { cart: savedCart };
 }

@@ -18,67 +18,14 @@ enum AddressType {
   "Address can be used as a mailing address for sending physical items"
   shipping
 }
-input GeolocationInput {
-  latitude: Float
-  longitude: Float
-}
-input DistanceInput {
-  value: Float
-  text: String
-  branch: String
-  branchId: String
-}
-input MetaddressInput {
-  administrative_area_level_1: String
-  administrative_area_level_2: String
-  neighborhood: String
-  street_address: String
-  sublocality: String
-  distance: DistanceInput
-}
-input CustomAddressInput {
-  "The id to identify the address"
-  _id: ID
 
-  "We use a description as an alias"
-  description: String
-
-  "The exact address of locality"
-  address: String
-
-  "Aditional indications"
-  reference: String
-
-  "Exact address position"
-  geolocation: GeolocationInput
-
-  "Aditional address information"
-  metaddress: MetaddressInput
-  
-  "The person who recieves the order"
-  receiver: String
-
-  "Phone number of the person who receives the order"
-  phone: String
-}
-"Defines a new Address and the account to which it should be added"
-input CustomAddAccountAddressBookEntryInput {
-  "The account ID"
-  accountId: ID!
-
-  "The address to add"
-  address: CustomAddressInput!
-
-  "An optional string identifying the mutation call, which will be returned in the response payload"
-  clientMutationId: String
-}
 "Defines a new Address and the account to which it should be added"
 input AddAccountAddressBookEntryInput {
   "The account ID"
   accountId: ID!
 
   "The address to add"
-  address: CustomAddressInput!
+  address: AddressInput!
 
   "An optional string identifying the mutation call, which will be returned in the response payload"
   clientMutationId: String
@@ -102,19 +49,13 @@ input CreateAccountInput {
   shopId: ID!
 
   "The userID account was created from create a new account from"
-  userId: ID
+  userId: ID!
 
   "Username"
   username: String
 
-  "phone"
-  phone: String
-
-  "firstName"
-  firstName: String
-
-  "lastName"
-  lastName: String
+  "An optional string identifying the mutation call, which will be returned in the response payload"
+  clientMutationId: String
 }
 
 "Describes changes that should be applied to one of the addresses for an account"
@@ -132,7 +73,7 @@ input UpdateAccountAddressBookEntryInput {
   type: AddressType
 
   "The address changes to apply"
-  updates: CustomAddressInput!
+  updates: AddressInput!
 }
 
 "Describes which address should be removed from which account"
@@ -175,9 +116,6 @@ input UpdateAccountInput {
 
   "The preferred language (code) used by this account"
   language: String
-
-  "The phone used by this account"
-  phone: String
 
   "The last name of the person this account represents"
   lastName: String
@@ -241,67 +179,7 @@ input UpdateGroupsForAccountsInput {
   "The group IDs"
   groupIds: [ID]!
 }
-type Geolocation {
-  latitude: Float
-  longitude: Float
-}
-type Distance {
-  value: Float
-  text: String
-  branch: String
-  branchId: String
-}
-type Metaddress {
-  administrative_area_level_1: String
-  administrative_area_level_2: String
-  neighborhood: String
-  street_address: String
-  sublocality: String
-  distance: Distance
-}
-type CustomAddress {
-  "The id to identify the address"
-  _id: ID
 
-  "We use a description as an alias"
-  description: String
-
-  "The exact address of locality"
-  address: String
-
-  "Aditional indications"
-  reference: String
-
-  "Exact address position"
-  geolocation: Geolocation
-
-  "Aditional address information"
-  metaddress: Metaddress
-  
-  "The person who recieves the order"
-  receiver: String
-
-  "Phone number of the person who receives the order"
-  phone: String
-}
-type CustomAddressEdge {
-  cursor: ConnectionCursor!
-  node: CustomAddress
-}
-type CustomAddressConnection {
-  "The list of nodes that match the query, wrapped in an edge to provide a cursor string for each"
-  edges: [CustomAddressEdge]
-
-  """
-  You can request the `nodes` directly to avoid the extra wrapping that `NodeEdge` has,
-  if you know you will not need to paginate the results.
-  """
-  nodes: [CustomAddress]
-  "Information to help a client request the next or previous page"
-  pageInfo: PageInfo!
-  "The total number of nodes that match your query"
-  totalCount: Int!
-}
 "Represents a single user account"
 type Account implements Node {
   "The account ID"
@@ -310,29 +188,26 @@ type Account implements Node {
   "A list of physical or mailing addresses associated with this account"
   addressBook(
     "Return only results that come after this cursor. Use this with `first` to specify the number of results to return."
-    after: ConnectionCursor
+    after: ConnectionCursor,
 
     "Return only results that come before this cursor. Use this with `last` to specify the number of results to return."
-    before: ConnectionCursor
+    before: ConnectionCursor,
 
     "Return at most this many results. This parameter may be used with either `after` or `offset` parameters."
-    first: ConnectionLimitInt
+    first: ConnectionLimitInt,
 
     "Return at most this many results. This parameter may be used with the `before` parameter."
-    last: ConnectionLimitInt
+    last: ConnectionLimitInt,
 
     "Return only results that come after the Nth result. This parameter may be used with the `first` parameter."
     offset: Int
-  ): CustomAddressConnection
+  ): AddressConnection
 
   "A list of shops this user can administer with the admin UI"
   adminUIShops: [Shop]
 
   "Bio to display on profile"
   bio: String
-
-  "The related branch id"
-  branchId: String
 
   "The date and time at which this account was created"
   createdAt: DateTime!
@@ -348,9 +223,6 @@ type Account implements Node {
 
   "The preferred language used by this account"
   language: String
-
-  "The phone used by this account"
-  phone: String
 
   "The last name of the person this account represents, if known"
   lastName: String
@@ -383,6 +255,50 @@ type Account implements Node {
 
   "Username"
   username: String
+}
+
+"Represents a single user partial account"
+type BasicAccount implements Node {
+  "The account ID"
+  _id: ID!
+
+  "Flag to indicate if the account accepts marketing emails"
+  acceptsMarketing: Boolean
+
+  "Email record associated with the account"
+  emails: [EmailRecord]
+
+  "List of group Ids to which the account belongs"
+  groups: [String]
+
+  "The full name of the person this account represents, if known"
+  name: String
+
+  "List of shipping/billing addresses"
+  profile: [Profile]
+
+  "ID of shop"
+  shopId: String
+
+  "Account creation state"
+  state: String
+
+  "ID of user"
+  userId: String
+
+  "The date and time at which this account was created"
+  createdAt: DateTime
+
+  "The date and time at which this account was last updated"
+  updatedAt: DateTime
+
+  "List of shop Ids"
+  adminUIShopIds: [String]
+
+}
+
+type Profile {
+  addressBook: [Address]
 }
 
 """
@@ -422,10 +338,10 @@ type AccountEdge implements NodeEdge {
 "The response from the `addAccountAddressBookEntry` mutation"
 type AddAccountAddressBookEntryPayload {
   "The added address"
-  address: CustomAddress
+  address: Address
 
   "The added address edge"
-  addressEdge: CustomAddressEdge
+  addressEdge: AddressEdge
 
   "The same string you sent with the mutation params, for matching mutation calls with their responses"
   clientMutationId: String
@@ -443,7 +359,7 @@ type AddAccountEmailRecordPayload {
 "The response from the `createAccount` mutation"
 type CreateAccountPayload {
   "The added account"
-  account: Account
+  account: BasicAccount
 
   "The same string you sent with the mutation params, for matching mutation calls with their responses"
   clientMutationId: String
@@ -461,7 +377,7 @@ type SendResetAccountPasswordEmailPayload {
 "The response from the `removeAccountAddressBookEntry` mutation"
 type RemoveAccountAddressBookEntryPayload {
   "The removed address"
-  address: CustomAddress
+  address: Address
 
   "The same string you sent with the mutation params, for matching mutation calls with their responses"
   clientMutationId: String
@@ -488,7 +404,7 @@ type SetAccountDefaultEmailPayload {
 "The response from the `updateAccountAddressBookEntry` mutation"
 type UpdateAccountAddressBookEntryPayload {
   "The updated address"
-  address: CustomAddress
+  address: Address
 
   "The same string you sent with the mutation params, for matching mutation calls with their responses"
   clientMutationId: String
@@ -512,14 +428,6 @@ type UpdateGroupsForAccountsPayload {
 }
 
 extend type Mutation {
-  "Returns the Address updated with meta"
-  updateMetadataAddressBook(
-    "metaddress to update"
-    metaddress: MetaddressInput
-    "address id  to update"
-    addressId: ID
-  ): CustomAddress
-
   "Add a new address to the `addressBook` field for an account"
   addAccountAddressBookEntry(
     "Mutation input"
@@ -535,11 +443,6 @@ extend type Mutation {
   "Create an account based off a user"
   createAccount(
     "Mutation input"
-    input: CreateAccountInput!
-  ): CreateAccountPayload
-
-  "Create account without credentials"
-  createAccountWithoutCredentials(
     input: CreateAccountInput!
   ): CreateAccountPayload
 
@@ -588,39 +491,36 @@ extend type Mutation {
 
 extend type Query {
   "Returns the account with the provided ID"
-  account("The account ID" id: ID!): Account
+  account(
+    "The account ID"
+    id: ID!
+  ): Account
 
   "Returns accounts optionally filtered by account groups"
   accounts(
     "Return only accounts in any of these groups"
-    groupIds: [ID]
-
-    "Query accounts"
-    query: String
-
-    "Query accounts"
-    query: String
+    groupIds: [ID],
 
     "Return accounts that aren't in any groups"
-    notInAnyGroups: Boolean
+    notInAnyGroups: Boolean,
 
     "Return only results that come after this cursor. Use this with `first` to specify the number of results to return."
-    after: ConnectionCursor
+    after: ConnectionCursor,
 
     "Return only results that come before this cursor. Use this with `last` to specify the number of results to return."
-    before: ConnectionCursor
+    before: ConnectionCursor,
 
     "Return at most this many results. This parameter may be used with either `after` or `offset` parameters."
-    first: ConnectionLimitInt
+    first: ConnectionLimitInt,
 
     "Return at most this many results. This parameter may be used with the `before` parameter."
-    last: ConnectionLimitInt
+    last: ConnectionLimitInt,
 
     "Return only results that come after the Nth result. This parameter may be used with the `first` parameter."
-    offset: Int
+    offset: Int,
 
     "Return results sorted in this order"
-    sortOrder: SortOrder = asc
+    sortOrder: SortOrder = asc,
 
     "By default, groups are sorted by when they were created, oldest first. Set this to sort by one of the other allowed fields"
     sortBy: AccountSortByField = createdAt
@@ -629,22 +529,22 @@ extend type Query {
   "Returns customer accounts"
   customers(
     "Return only results that come after this cursor. Use this with `first` to specify the number of results to return."
-    after: ConnectionCursor
+    after: ConnectionCursor,
 
     "Return only results that come before this cursor. Use this with `last` to specify the number of results to return."
-    before: ConnectionCursor
+    before: ConnectionCursor,
 
     "Return at most this many results. This parameter may be used with either `after` or `offset` parameters."
-    first: ConnectionLimitInt
+    first: ConnectionLimitInt,
 
     "Return at most this many results. This parameter may be used with the `before` parameter."
-    last: ConnectionLimitInt
+    last: ConnectionLimitInt,
 
     "Return only results that come after the Nth result. This parameter may be used with the `first` parameter."
-    offset: Int
+    offset: Int,
 
     "Return results sorted in this order"
-    sortOrder: SortOrder = asc
+    sortOrder: SortOrder = asc,
 
     "By default, groups are sorted by when they were created, oldest first. Set this to sort by one of the other allowed fields"
     sortBy: AccountSortByField = createdAt
