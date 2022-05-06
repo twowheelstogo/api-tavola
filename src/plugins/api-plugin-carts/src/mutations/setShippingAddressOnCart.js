@@ -29,7 +29,7 @@ export default async function setShippingAddressOnCart(context, input) {
   // inputSchema.validate(cleanedInput);
 
   const { address = {}, addressId, cartId, cartToken } = input;
-  console.log("cart.setShippingAddressOnCart", input, address);
+  // console.log("cart.setShippingAddressOnCart", input, address);
   address._id = addressId || address._id || Random.id();
   const cart = await getCartById(context, cartId, { cartToken, throwIfNotFound: true });
 
@@ -52,6 +52,6 @@ export default async function setShippingAddressOnCart(context, input) {
 
   const savedCart = await context.mutations.saveCart(context, updatedCart);
 
-  console.info("LOG: setShippingAddressOnCart", JSON.stringify(savedCart.shipping));
+  // console.info("LOG: setShippingAddressOnCart", JSON.stringify(savedCart.shipping));
   return { cart: savedCart };
 }

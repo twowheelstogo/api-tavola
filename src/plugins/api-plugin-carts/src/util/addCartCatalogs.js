@@ -32,10 +32,10 @@ export default async function addCartCatalogs(
           cartCatalogId,
         } = inputItem;
         if (!productConfiguration) {
-          console.info(
-            "Error addCartCatalog productConfiguration",
-            productConfiguration
-          );
+          // console.info(
+          //   "Error addCartCatalog productConfiguration",
+          //   productConfiguration
+          // );
           return null;
         }
         const { productId, productVariantId } = productConfiguration;

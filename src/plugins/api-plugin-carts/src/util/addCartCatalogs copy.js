@@ -56,7 +56,7 @@ export default async function addCartCatalogs(context, cart, input, options = {}
       .map(async (inputItem) => {
         const { metafields, productConfiguration, quantity, price, cartCatalogId } = inputItem;
         if (!productConfiguration) {
-          console.info("Error addCartCatalog productConfiguration", productConfiguration);
+          // console.info("Error addCartCatalog productConfiguration", productConfiguration);
           return null;
         }
         const { productId, productVariantId } = productConfiguration;
@@ -298,7 +298,7 @@ export default async function addCartCatalogs(context, cart, input, options = {}
     .filter((i) => i.quantity)
     .sort((a, b) => a.addedAt.getTime() - b.addedAt.getTime());
 
-  console.info("addCartCatalogs", JSON.stringify(updated, null, 2));
+  // console.info("addCartCatalogs", JSON.stringify(updated, null, 2));
   return {
     incorrectPriceFailures,
     maxOrderQuantityFailures,

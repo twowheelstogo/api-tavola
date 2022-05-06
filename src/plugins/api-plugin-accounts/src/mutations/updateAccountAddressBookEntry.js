@@ -94,7 +94,7 @@ export default async function updateAccountAddressBookEntry(context, input) {
     updatedBy: userIdFromContext,
     updatedFields
   });
-  console.info("LOG: updateAccountAddressBookEntry", updatedAccount);
+  // console.info("LOG: updateAccountAddressBookEntry", updatedAccount);
 
   // // If the address update was successful, then return the full updated address.
   // // Since we just pushed into `profile.addressBook`, we know it will exist.

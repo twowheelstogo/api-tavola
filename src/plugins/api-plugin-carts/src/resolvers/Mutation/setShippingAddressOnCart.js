@@ -16,7 +16,7 @@ import { decodeAddressOpaqueId, decodeCartOpaqueId } from "../../xforms/id.js";
  * @returns {Promise<Object>} SetShippingAddressOnCartPayload
  */
 export default async function setShippingAddressOnCart(parentResult, { input }, context) {
-  console.info("resolver cart.setShippingAddressOnCart", input)
+  // console.info("resolver cart.setShippingAddressOnCart", input)
   const { address, addressId: opaqueAddressId, cartId: opaqueCartId, cartToken, clientMutationId = null } = input;
 
   const addressId = decodeAddressOpaqueId(opaqueAddressId);
