@@ -2,6 +2,7 @@ import { importPluginsJSONFile, ReactionAPICore } from "@reactioncommerce/api-co
 import Logger from "@reactioncommerce/logger";
 import packageJson from "../package.json";
 
+
 const api = new ReactionAPICore({
   serveStaticPaths: ["public"],
   version: packageJson.version
