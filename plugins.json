@@ -39,6 +39,7 @@
   "productVariants": "./src/plugins/api-plugin-products-variants/src/index.js",
   "i18ns": "@idigi/reaction-plugin-i18ns",
   "orderx": "@idigi/reaction-plugin-orderx",
+  "statics": "@idigi/reaction-plugin-statics",
   "branch": "./src/plugins/api-plugin-branch/src/index.js",
   "epay": "./src/plugins/api-plugin-epay-tavola/src/index.js"
 }
