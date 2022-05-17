@@ -1,4 +1,5 @@
 import getConnectionTypeResolvers from "@reactioncommerce/api-utils/graphql/getConnectionTypeResolvers.js";
+import {encodeAddressOpaqueId} from "../xforms/id.js";
 import Account from "./Account/index.js";
 import AddAccountAddressBookEntryPayload from "./AddAccountAddressBookEntryPayload.js";
 import Group from "./Group/index.js";
@@ -20,6 +21,7 @@ export default {
   Mutation,
   Query,
   Shop,
+  CustomAddress: { _id: (node) => encodeAddressOpaqueId(node._id) },
   ...getConnectionTypeResolvers("Account"),
-  ...getConnectionTypeResolvers("Group")
+  ...getConnectionTypeResolvers("Group"),
 };
