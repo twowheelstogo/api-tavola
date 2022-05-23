@@ -42,7 +42,7 @@ export default async function publishProductToCatalog(product, context) {
 
 /*   CatalogSchema.validate(modifier, { modifier: true }); */
 
-  console.info("Before Publish", JSON.stringify(catalogProduct, null, 2));
+  // console.info("Before Publish", JSON.stringify(catalogProduct, null, 2));
 
   // Insert/update catalog document
   const result = await Catalog.updateOne(

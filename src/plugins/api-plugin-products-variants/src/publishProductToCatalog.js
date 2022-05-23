@@ -10,6 +10,5 @@ export default async function publishProductToCatalog(
       }
       for (const field of ["minOption", "maxOption", "multipleOption"])
         variant[field] = baseVariant[field];
-  console.info("final", variant);
     }
 }

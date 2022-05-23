@@ -55,7 +55,7 @@ export default function cartCatalogsRefresh(opts) {
         ///      Validation
         ///|\\\|///|\\\|///|\\\
         if (variant.price.minQty && variant.price.minQty > qtyTotal) {
-          console.info("Error: minOrderQuantityFailures", {
+          console.error("ERROR: minOrderQuantityFailures", {
             // minOrderQuantityFailures.push({
             minOrderQuantity: variant.price.minQty,
             productConfiguration: {
@@ -66,7 +66,7 @@ export default function cartCatalogsRefresh(opts) {
           });
         }
         if (variant.price.maxQty && variant.price.maxQty < qtyTotal) {
-          console.info("Error: maxOrderQuantityFailures", {
+          console.error("ERROR: maxOrderQuantityFailures", {
             // maxOrderQuantityFailures.push({
             maxOrderQuantity: variant.price.maxQty,
             productConfiguration: {

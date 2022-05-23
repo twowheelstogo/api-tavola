@@ -43,7 +43,6 @@ export default async function productsVariantsStartup(context) {
         if (!baseVariant) continue;
         for (const field of ["minOption", "maxOption", "multipleOption"])
           variant[field] = baseVariant[field];
-        console.info("final", variant);
       }
     }
   );

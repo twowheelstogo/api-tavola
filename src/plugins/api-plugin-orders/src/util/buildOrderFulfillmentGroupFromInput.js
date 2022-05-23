@@ -29,7 +29,7 @@ export default async function buildOrderFulfillmentGroupFromInput(context, {
   cart
 }) {
   const { data, items, catalogs, selectedFulfillmentMethodId, shopId, totalPrice: expectedGroupTotal, type } = inputGroup;
-  console.info("inputGroup", inputGroup, catalogs)
+  // console.info("inputGroup", inputGroup, catalogs)
 
   const group = {
     _id: Random.id(),

@@ -192,7 +192,7 @@ export default async function addCartCatalogs(
       })
       .filter((h) => h)
   );
-  console.info(`\n\n==> { catalogs }\n`, catalogs, `\n`, ``);
+  // console.info(`\n\n==> { catalogs }\n`, catalogs, `\n`, ``);
   throw "Stop";
   ///|\\\|///|\\\|///|\\\
   ///      Return
