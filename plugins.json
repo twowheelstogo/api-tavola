@@ -41,5 +41,6 @@
   "orderx": "@idigi/reaction-plugin-orderx",
   "statics": "@idigi/reaction-plugin-statics",
   "branch": "./src/plugins/api-plugin-branch/src/index.js",
-  "epay": "./src/plugins/api-plugin-epay-tavola/src/index.js"
+  "epay": "./src/plugins/api-plugin-epay-tavola/src/index.js",
+  "apis": "@idigi/reaction-plugin-apis"
 }
