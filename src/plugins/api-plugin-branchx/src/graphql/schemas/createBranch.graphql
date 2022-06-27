@@ -1,0 +1,76 @@
+input CreateGeoPointInput{
+  "This is the type of point"  
+  type: GeoEnum!
+  "lat, lng"
+  coordinates: [Float!]!
+}
+
+input CreateGeoPolygonInput{
+  "This is the type of Polygon"
+  type: GeoEnum!
+
+  "array of points"
+  coordinates: [[[Float]]]
+}
+
+input CreateGeneralDataBranchInput {
+  "name of the branch"
+  name: String!
+
+  "address of the branch"
+  address: String!
+
+  "phone of the branch"
+  phone: String!
+
+  "invoice of the branch"
+  invoiceCode: String!
+
+  "delivery code of the branch"
+  deliveryCode: String!
+}
+
+input CreateGeographyDataBranchInput {
+  "distance on kms"
+  distance: Float!
+  "point of the branch"
+  point: CreateGeoPointInput!
+  "polygon of delivery"
+  polygon: CreateGeoPolygonInput!
+}
+
+input CreateScheduleDataBranchInput {
+  "flag if is closed day"
+  isClosed: Boolean!
+
+  "HH>MM Open schedule"
+  sheduledOpenString: String!
+
+  "number schedule time"
+  scheduledOpenNumber: Float!
+
+  "HH>MM close schedule"
+  scheduledCloseString: String!
+
+  "number close schedule"
+  scheduledClosedNumber: Float!
+}
+
+input CreateBranchInput{
+  "General data of the branch"
+  generalData: CreateGeneralDataBranchInput!
+
+  "schedule data of the branch"
+  scheduleData: [CreateScheduleDataBranchInput!]!
+
+  "data geographic"
+  geographyData: CreateGeographyDataBranchInput!
+
+  "shop id of the branch"
+  shopId: ID!
+}
+
+extend type Mutation {
+  "Create a new branch"
+  createBranch("Mutation input" input: CreateBranchInput!): Branch!
+}

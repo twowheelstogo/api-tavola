@@ -1,0 +1,73 @@
+input BranchFilterInput {
+  "Keywords typed by the user in the search input field"
+  searchField: String
+}
+
+type BranchConnection {
+  "The list of nodes that match the query, wrapped in an edge to provide a cursor string for each"
+  edges: [Branch]
+
+  """
+  You can request the `nodes` directly to avoid the extra wrapping that `NodeEdge` has,
+  if you know you will not need to paginate the results.
+  """
+  nodes: [Branch]
+  "Information to help a client request the next or previous page"
+  pageInfo: PageInfo!
+  "The total number of nodes that match your query"
+  totalCount: Int!
+}
+
+
+extend type Query {
+  branches(
+    "Filters to apply to a list of branch"
+    filters: BranchFilterInput
+
+    "Provide a list of shop IDs from which you want to get branches from"
+    shopId: ID
+
+    "Return only results that come after this cursor. Use this with `first` to specify the number of results to return."
+    after: ConnectionCursor
+
+    "Return only results that come before this cursor. Use this with `last` to specify the number of results to return."
+    before: ConnectionCursor
+
+    "Return at most this many results. This parameter may be used with either `after` or `offset` parameters."
+    first: ConnectionLimitInt
+
+    "Return at most this many results. This parameter may be used with the `before` parameter."
+    last: ConnectionLimitInt
+
+    "Return only results that come after the Nth result. This parameter may be used with the `first` parameter."
+    offset: Int
+  ): BranchConnection!
+
+  "Get a branch by its ID"
+  branchById(
+    "The shop that owns the branch"
+    shopId: ID
+    "The branch ID"
+    branchId: ID
+  ): Branch!
+
+  "Get all branches"
+  branchWithoutPagination("The shop that owns the branch" shopId: ID!): [Branch]
+
+  "Get metadata branch"
+  metaddress(
+    "The shop that owns the branch"
+    shopId: ID!
+    "The point of customer"
+    point: UpdateGeoPointInput!
+  ): MetaddressBranch
+  "check if is available the branch"
+  isAvailableBranch(
+    "The shop that owns the branch"
+    shopId: ID
+    "The branch ID"
+    branchId: ID
+    "The date of delivery"
+    date: DateTime
+  ): Boolean
+}

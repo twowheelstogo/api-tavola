@@ -1,0 +1,123 @@
+enum GeoEnum {
+  Point
+  Polygon
+}
+
+type GeoPoint {
+  "This is the type of point"
+  type: GeoEnum!
+
+  "lat, lng"
+  coordinates: [Float!]!
+}
+
+type GeoPolygon {
+  "This is the type of Polygon"
+  type: GeoEnum!
+
+  "array of points"
+  coordinates: [[[Float]]]
+}
+
+type GeneralDataBranch {
+  "name of the branch"
+  name: String!
+
+  "address of the branch"
+  address: String!
+
+  "phone of the branch"
+  phone: String!
+
+  "invoice of the branch"
+  invoiceCode: String!
+
+  "delivery code of the branch"
+  deliveryCode: String!
+}
+
+type GeographyDataBranch {
+  "distance on kms"
+  distance: Float!
+  "point of the branch"
+  point: GeoPoint!
+  "polygon of delivery"
+  polygon: GeoPolygon!
+}
+
+type ScheduleDataBranch {
+  "flag if is closed day"
+  isClosed: Boolean!
+
+  "HH>MM Open schedule"
+  sheduledOpenString: String!
+
+  "number schedule time"
+  scheduledOpenNumber: Float!
+
+  "HH>MM close schedule"
+  scheduledCloseString: String!
+
+  "number close schedule"
+  scheduledClosedNumber: Float!
+}
+
+type Branch {
+  "General data of the branch"
+  generalData: GeneralDataBranch!
+
+  "schedule data of the branch"
+  scheduleData: [ScheduleDataBranch!]!
+
+  "data geographic"
+  geographyData: GeographyDataBranch!
+
+  "shop id of the branch"
+  shopId: ID!
+
+  "active of the branch"
+  active: Boolean
+
+  "identification of the branch"
+  _id: String
+
+  "Created branch"
+  createdAt: DateTime
+
+  "updated At branch"
+  updatedAt: DateTime
+}
+
+type DistanceAddressBranch {
+  "text of distance"
+  text: String
+
+  "kms of distance"
+  value: String
+
+  "it is id of the branch more nearly"
+  branchId: String
+
+  "name of the branch"
+  branch: String
+}
+
+type MetaddressBranch {
+  "address type of google map"
+  administrative_area_level_1: String
+
+  "address type of google map"
+  administrative_area_level_2: String
+
+  "address type of google map"
+  neighborhood: String
+
+  "address type of google map"
+  street_address: String
+
+  "address type of google map"
+  sublocality: String
+
+  "metadata distance"
+  distance: DistanceAddressBranch
+}

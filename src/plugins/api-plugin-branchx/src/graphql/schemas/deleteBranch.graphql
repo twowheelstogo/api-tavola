@@ -1,0 +1,15 @@
+input DeleteBranchInput{
+  "Shop id of the branch"
+  shopId: ID!
+  
+  "branchiD"
+  branchId: ID!  
+}
+
+extend type Mutation {
+  "Delete a new branch"
+  deleteBranch(
+    "Mutation input"
+    input: DeleteBranchInput!
+  ): Branch!
+}

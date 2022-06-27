@@ -1,0 +1,17 @@
+[
+    {
+      "language": "Spanish",
+      "i18n": "es",
+      "ns": "reaction-plugin-branch",
+      "translation": {
+        "reaction-plugin-branch": {
+          "admin": {
+            "branches": "Sucursales",
+            "branchTable":{
+              "filterPlaceholder": "Filtro por nombre o dirección"
+            }
+          }
+        }
+      }
+    }
+  ]

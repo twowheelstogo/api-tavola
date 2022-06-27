@@ -1,0 +1,21 @@
+[
+    {
+      "description": "Branch managers acting on all entities.",
+      "subjects": [ "reaction:groups:branch-managers" ],
+      "resources": [ "reaction:legacy:branches" ],
+      "actions": [ "create" ],
+      "effect": "allow"
+    },
+    {
+      "description": "Branch managers acting on specific entities.",
+      "subjects": [ "reaction:groups:branch-managers" ],
+      "resources": [ "reaction:legacy:branches:*" ],
+      "actions": [
+        "invite",
+        "read",
+        "update"
+      ],
+      "effect": "allow"
+    }
+  ]
+  
