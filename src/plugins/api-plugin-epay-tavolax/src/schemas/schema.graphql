@@ -1,0 +1,18 @@
+"Data for a ePay payment"
+type EPayPaymentData {
+  auditNumber:Int!
+  referenceNumber:String!
+  authorizationNumber:String!
+  responseCode:String!,
+  email:String!,
+  pan:String!,
+  cardName:String!,
+  amount:Float!
+}
+
+extend union PaymentData = EPayPaymentData
+
+extend enum PaymentMethodName {
+  "ePay payment method"
+  epay_card
+}
