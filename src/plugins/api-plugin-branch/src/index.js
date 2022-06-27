@@ -20,14 +20,14 @@ export default async function register(app) {
     version: pkg.version,
     i18n,
     collections: {
-      Branches: {
-        name: "Branches",
-        indexes: [
-          [{ "geographyData.point": "2dsphere" }],
-          [{ "geographyData.polygon": "2dsphere" }],
-          [{ shopId: 1 }]
-        ]
-      }
+      // Branches: {
+      //   name: "Branches",
+      //   indexes: [
+      //     [{ "geographyData.point": "2dsphere" }],
+      //     [{ "geographyData.polygon": "2dsphere" }],
+      //     [{ shopId: 1 }]
+      //   ]
+      // }
     },
     functionsByType: {
       startup: [startup]
