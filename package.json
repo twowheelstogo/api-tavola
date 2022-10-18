@@ -1,6 +1,6 @@
 {
   "name": "reaction-api",
-  "version": "4.1.7",
+  "version": "4.1.8",
   "description": "Reaction is a modern reactive, real-time event driven ecommerce platform.",
   "main": "./src/index.js",
   "type": "module",
@@ -192,7 +192,6 @@
     "lint": "eslint .",
     "lint:gql": "graphql-schema-linter ./src/**/*.graphql",
     "version": "echo $npm_package_version",
-    "postinstall": "is-ci || is-docker || husky install",
     "prepublishOnly": "pinst --disable",
     "postpublish": "pinst --enable",
     "prepare": "npm run snyk-protect",

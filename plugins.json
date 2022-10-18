@@ -39,7 +39,7 @@
   "productVariants": "./src/plugins/api-plugin-products-variants/src/index.js",
   "sliders": "@idigi/reaction-plugin-sliders",
   "blocks": "@idigi/reaction-plugin-blocks",
-  "accountx": "@idigi/reaction-plugin-accountx",
+  "accountx": "@idigi/reaction-plugin-accountxs",
   "productx": "@idigi/reaction-plugin-productx",
   "i18ns": "@idigi/reaction-plugin-i18ns",
   "orderx": "@idigi/reaction-plugin-orderx",
